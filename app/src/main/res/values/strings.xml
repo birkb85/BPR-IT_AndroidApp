@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">BPR-IT</string>
+
+    <string name="login_title">BPR-IT - Login</string>
+    <string name="login_username">Brugernavn:</string>
+    <string name="login_password">Kodeord:</string>
+    <string name="login_remember">Husk oplysninger</string>
+    <string name="login_login">Login</string>
+    <string name="login_version">version: </string>
 </resources>
