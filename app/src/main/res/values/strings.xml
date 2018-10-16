@@ -1,10 +1,32 @@
 <resources>
     <string name="app_name">BPR-IT</string>
 
+    <string name="demo_text">text</string>
+    <string name="demo_date">date</string>
+
+    <!-- Login -->
     <string name="login_title">BPR-IT - Login</string>
     <string name="login_username">Brugernavn:</string>
     <string name="login_password">Kodeord:</string>
     <string name="login_remember">Husk oplysninger</string>
     <string name="login_login">Login</string>
     <string name="login_version">version:</string>
+
+    <!-- Menu -->
+    <string name="menu_title">BPR-IT - Menu</string>
+    <string name="menu_tasks">Opgaver</string>
+    <string name="menu_components">Komponenter</string>
+
+    <!-- Task List -->
+    <string name="tasklist_title">BPR-IT - Opgave liste</string>
+
+    <!-- Task Details -->
+    <string name="taskdetails_title">BPR-IT - Opgave detaljer</string>
+
+    <!-- Component List -->
+    <string name="componentlist_title">BPR-IT - Komponent liste</string>
+
+    <!-- Component Details -->
+    <string name="componentdetails_title">BPR-IT - Komponent detaljer</string>
+
 </resources>
