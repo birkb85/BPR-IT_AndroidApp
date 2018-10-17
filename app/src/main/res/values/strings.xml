@@ -10,7 +10,7 @@
     <string name="login_password">Kodeord:</string>
     <string name="login_remember">Husk oplysninger</string>
     <string name="login_login">Login</string>
-    <string name="login_version">version:</string>
+    <string name="login_version">version: </string>
 
     <!-- Menu -->
     <string name="menu_title">BPR-IT - Menu</string>
@@ -19,12 +19,14 @@
 
     <!-- Task List -->
     <string name="tasklist_title">BPR-IT - Opgave liste</string>
+    <string name="tasklist_filter">Søg</string>
 
     <!-- Task Details -->
     <string name="taskdetails_title">BPR-IT - Opgave detaljer</string>
 
     <!-- Component List -->
     <string name="componentlist_title">BPR-IT - Komponent liste</string>
+    <string name="componentlist_filter">Søg</string>
 
     <!-- Component Details -->
     <string name="componentdetails_title">BPR-IT - Komponent detaljer</string>

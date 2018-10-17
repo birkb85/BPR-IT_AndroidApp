@@ -6,7 +6,6 @@
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity android:name=".LoginActivity">
@@ -16,15 +15,20 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MenuActivity">
+        <activity android:name=".MenuActivity"
+                  android:label="@string/menu_title">
         </activity>
-        <activity android:name=".TaskListActivity">
+        <activity android:name=".TaskListActivity"
+                  android:label="@string/tasklist_title">
         </activity>
-        <activity android:name=".TaskDetailsActivity">
+        <activity android:name=".TaskDetailsActivity"
+                  android:label="@string/taskdetails_title">
         </activity>
-        <activity android:name=".ComponentListActivity">
+        <activity android:name=".ComponentListActivity"
+                  android:label="@string/componentlist_title">
         </activity>
-        <activity android:name=".ComponentDetailsActivity">
+        <activity android:name=".ComponentDetailsActivity"
+                  android:label="@string/componentdetails_title">
         </activity>
     </application>
 
