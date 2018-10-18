@@ -71,7 +71,7 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginStart="@dimen/activity_horizontal_margin"
                             android:contentDescription="@string/menu_tasks"
-                            android:src="@color/colorPrimary"/>
+                            android:src="@drawable/task"/>
 
                     <TextView
                             android:layout_width="match_parent"
@@ -106,7 +106,7 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginStart="@dimen/activity_horizontal_margin"
                             android:contentDescription="@string/menu_components"
-                            android:src="@color/colorPrimary"/>
+                            android:src="@drawable/component"/>
 
                     <TextView
                             android:layout_width="match_parent"
