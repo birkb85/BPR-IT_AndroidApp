@@ -1,34 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.bpr_it.app.bpr_it">
+          package="com.bprit.app.bprit">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
+            android:name=".model.Global"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+        <activity android:name="com.bprit.app.bprit.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MenuActivity"
+        <activity android:name="com.bprit.app.bprit.MenuActivity"
                   android:label="@string/menu_title">
         </activity>
-        <activity android:name=".TaskListActivity"
+        <activity android:name="com.bprit.app.bprit.TaskListActivity"
                   android:label="@string/tasklist_title">
         </activity>
-        <activity android:name=".TaskDetailsActivity"
+        <activity android:name="com.bprit.app.bprit.TaskDetailsActivity"
                   android:label="@string/taskdetails_title">
         </activity>
-        <activity android:name=".ComponentListActivity"
+        <activity android:name="com.bprit.app.bprit.ComponentListActivity"
                   android:label="@string/componentlist_title">
         </activity>
-        <activity android:name=".ComponentDetailsActivity"
+        <activity android:name="com.bprit.app.bprit.ComponentDetailsActivity"
                   android:label="@string/componentdetails_title">
+        </activity>
+        <!--Intent filter to capture System Browser calling back to our app after sign-in-->
+        <activity
+                android:name="com.microsoft.identity.client.BrowserTabActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!--Add in your scheme/host from registered redirect URI-->
+                <!--By default, the scheme should be similar to 'msal[appId]' -->
+                <data android:scheme="msalea3501cb-f257-4d92-96e5-1f534d4343d1"
+                      android:host="auth" />
+            </intent-filter>
         </activity>
     </application>
 
