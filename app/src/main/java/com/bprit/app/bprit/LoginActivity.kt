@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.bprit.app.bprit.ui.login.LoginFragment
 import android.R.attr.fragment
-
+import android.view.KeyEvent
 
 
 class LoginActivity : AppCompatActivity() {
@@ -25,5 +25,16 @@ class LoginActivity : AppCompatActivity() {
 
         val fragment = supportFragmentManager.findFragmentById(R.id.container) as LoginFragment
         fragment.setAzureADOnActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_BACK -> {
+                // Back button is clicked
+                finish()
+                return true
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 }

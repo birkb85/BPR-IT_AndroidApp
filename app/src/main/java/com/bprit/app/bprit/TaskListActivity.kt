@@ -21,7 +21,7 @@ class TaskListActivity : AppCompatActivity() {
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
-                // Man klikker på tilbage knappen
+                // Back button is clicked
                 finish()
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                 return true

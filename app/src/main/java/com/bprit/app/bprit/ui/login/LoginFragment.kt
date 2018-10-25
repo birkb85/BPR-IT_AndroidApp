@@ -7,27 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bprit.app.bprit.R
-import android.content.pm.PackageManager
 import android.widget.*
 import com.bprit.app.bprit.MenuActivity
 import android.content.Intent
-import android.util.Log
-import com.android.volley.AuthFailureError
-import com.android.volley.DefaultRetryPolicy
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
-import com.bprit.app.bprit.data.WebserviceResult
-import com.bprit.app.bprit.interfaces.CallbackWebservice
-import com.bprit.app.bprit.interfaces.CallbackWebserviceResult
+import com.bprit.app.bprit.interfaces.CallbackAzureAD
+import com.bprit.app.bprit.model.ApplicationInformation
 import com.bprit.app.bprit.model.AzureAD
-import com.bprit.app.bprit.model.Webservice
-import com.microsoft.identity.client.*
-import kotlinx.android.synthetic.main.login_fragment.*
-import kotlinx.android.synthetic.main.menu_fragment.view.*
-import org.json.JSONObject
-import java.util.HashMap
 
 
 class LoginFragment : Fragment() {
@@ -38,9 +23,10 @@ class LoginFragment : Fragment() {
 
     private lateinit var viewModel: LoginViewModel
 
-    var nameTextView: TextView? = null
-    var dataTextView: TextView? = null
+    //    var nameTextView: TextView? = null
+//    var dataTextView: TextView? = null
     var signInOutButton: Button? = null
+    var menuButton: Button? = null
     //    var linearLayout: LinearLayout? = null
 //    var usernameEditText: EditText? = null
 //    var passwordEditText: EditText? = null
@@ -89,9 +75,7 @@ class LoginFragment : Fragment() {
 //    }
 
     fun setAzureADOnActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        viewModel.azureAD?.let { azure ->
-            azure.onActivityResult(requestCode, resultCode, data)
-        }
+        viewModel.azureAD?.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onCreateView(
@@ -106,9 +90,10 @@ class LoginFragment : Fragment() {
         // Use the ViewModel
 
         // Set views
-        nameTextView = activity?.findViewById(R.id.nameTextView)
-        dataTextView = activity?.findViewById(R.id.dataTextView)
+//        nameTextView = activity?.findViewById(R.id.nameTextView)
+//        dataTextView = activity?.findViewById(R.id.dataTextView)
         signInOutButton = activity?.findViewById(R.id.signInOutButton)
+        menuButton = activity?.findViewById(R.id.menuButton)
 //        linearLayout = activity?.findViewById(R.id.linearLayout)
 //        usernameEditText = activity?.findViewById(R.id.usernameEditText)
 //        passwordEditText = activity?.findViewById(R.id.passwordEditText)
@@ -122,47 +107,77 @@ class LoginFragment : Fragment() {
                 viewModel.azureAD = AzureAD(act)
             }
         }
+        activity?.let { act ->
+            viewModel.azureAD?.setActivity(act)
+        }
+        viewModel.azureAD?.setCallback(object : CallbackAzureAD {
+            override fun callbackCall(success: Boolean, isSignedIn: Boolean) {
+                if (success) {
+                    if (isSignedIn) {
+                        signInOutButton?.text = getString(R.string.login_signOut)
+                        menuButton?.visibility = View.VISIBLE
+                        viewModel.isSignedIn = true
+
+                        // Go to menu.
+                        activity?.let { fragmentActivity ->
+                            val intent = Intent(context, MenuActivity::class.java)
+                            startActivity(intent)
+                            fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+
+//                                    Log.d("DEBUG", "Test")
+
+//                                    val webservice = Webservice()
+//                                    webservice.testOrder(object : CallbackWebserviceResult {
+//                                        override fun callbackCall(result: WebserviceResult) {
+//                                            Log.d("DEBUG", "success: " + result.success.toString())
+//                                            Log.d("DEBUG", "error: " + result.error)
+//                                        }
+//                                    })
+                        }
+                    } else {
+                        signInOutButton?.text = getString(R.string.login_signIn)
+                        menuButton?.visibility = View.GONE
+                        viewModel.isSignedIn = false
+                    }
+                } else {
+                    signInOutButton?.text = getString(R.string.login_signIn)
+                    menuButton?.visibility = View.GONE
+                    viewModel.isSignedIn = false
+                }
+            }
+        })
+
+        // Set signInOutButton text
+        if (viewModel.isSignedIn) {
+            signInOutButton?.text = getString(R.string.login_signOut)
+            menuButton?.visibility = View.VISIBLE
+        } else {
+            signInOutButton?.text = getString(R.string.login_signIn)
+            menuButton?.visibility = View.GONE
+        }
 
         signInOutButton?.setOnClickListener {
-            // TODO BB 2018-10-17. Testing AzureAD login
             if (!viewModel.isSignedIn) {
                 viewModel.azureAD?.onCallGraphClicked()
             } else {
                 viewModel.azureAD?.onSignOutClicked()
             }
-
-//            // TODO BB 2018-10-17. Temp go to menu.
-//            activity?.let { fragmentActivity ->
-//
-//                Log.d("DEBUG", "Test")
-//
-//                val webservice = Webservice()
-//                webservice.testOrder(object : CallbackWebserviceResult {
-//                    override fun callbackCall(result: WebserviceResult) {
-//                        Log.d("DEBUG", "success: " + result.success.toString())
-//                        Log.d("DEBUG", "error: " + result.error)
-//                    }
-//                })
-//
-//
-////                fragmentActivity.finish()
-////                val intent = Intent(context, MenuActivity::class.java)
-////                startActivity(intent)
-////                fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-//            }
         }
 
-        // TODO BB 2018-10-17. Get version text from controller.
-        // Show version
-        try {
-            context?.let { context ->
-                val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-                val version = getString(R.string.login_version) + " " + pInfo.versionName
-                versionTextView?.setText(version)
+        menuButton?.setOnClickListener {
+            // Go to menu.
+            activity?.let { fragmentActivity ->
+                val intent = Intent(context, MenuActivity::class.java)
+                startActivity(intent)
+                fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }
-        } catch (e: PackageManager.NameNotFoundException) {
-//            Global.showExceptionAlertDialog(e, activity, alertDialogs)
-//            Crashlytics.logException(e)
+        }
+
+        // Show version
+        context?.let { context ->
+            val applicationInformation = ApplicationInformation()
+            val version = context.getString(R.string.login_version) + " " + applicationInformation.getVersion(context)
+            versionTextView?.text = version
         }
     }
 }

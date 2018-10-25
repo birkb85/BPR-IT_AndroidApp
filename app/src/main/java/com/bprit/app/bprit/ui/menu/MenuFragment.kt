@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,12 @@ import android.widget.*
 import com.bprit.app.bprit.ComponentListActivity
 import com.bprit.app.bprit.R
 import com.bprit.app.bprit.TaskListActivity
+import com.bprit.app.bprit.data.WebserviceResult
+import com.bprit.app.bprit.interfaces.CallbackWebserviceResult
+import com.bprit.app.bprit.model.DateTimeFunctions
+import com.bprit.app.bprit.model.Global
+import com.bprit.app.bprit.model.UserFunctions
+import com.bprit.app.bprit.model.Webservice
 
 class MenuFragment : Fragment() {
 
@@ -45,13 +52,46 @@ class MenuFragment : Fragment() {
         tasksDividerView = activity?.findViewById(R.id.tasksDividerView)
         componentsLinearLayout = activity?.findViewById(R.id.componentsLinearLayout)
 
+        // Set name
+        val userFunctions = UserFunctions()
+        nameTextView?.text = userFunctions.getDisplayName()
+
+        // Set date
+        val dateTimeFunctions = DateTimeFunctions()
+        dateTextView?.text = dateTimeFunctions.beautifyDate(dateTimeFunctions.getCurrentDate())
+
         tasksLinearLayout?.setOnClickListener {
-            // TODO BB 2018-10-17. Temp go to task list.
-            activity?.let { fragmentActivity ->
-                val intent = Intent(context, TaskListActivity::class.java)
-                startActivity(intent)
-                fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-            }
+
+            val webservice = Webservice()
+            webservice.testStatus(object : CallbackWebserviceResult {
+                override fun callbackCall(result: WebserviceResult) {
+                    if (result.success) {
+                        Log.d("DEBUG", "success: " + result.success.toString())
+                        Log.d("DEBUG", "error: " + result.error)
+                    } else {
+                        activity?.let { act ->
+                            act.runOnUiThread {
+                                val global = Global()
+                                global.getErrorAlertDialog(
+                                    act,
+                                    global.errorMessage(
+                                        act,
+                                        result.error
+                                    ),
+                                    null
+                                ).show()
+                            }
+                        }
+                    }
+                }
+            })
+
+//            // TODO BB 2018-10-17. Temp go to task list.
+//            activity?.let { fragmentActivity ->
+//                val intent = Intent(context, TaskListActivity::class.java)
+//                startActivity(intent)
+//                fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+//            }
         }
 
         componentsLinearLayout?.setOnClickListener {

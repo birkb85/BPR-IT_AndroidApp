@@ -22,13 +22,15 @@ class MenuActivity : AppCompatActivity() {
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
-                // Man klikker på tilbage knappen
-                // Genstarter applikation
+                // Back button is clicked
                 finish()
-                val intent = Intent(this, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                        Intent.FLAG_ACTIVITY_CLEAR_TASK // Afslut alle activities der måtte være i baggrunden.
-                startActivity(intent)
+
+                // If I need to restart application, use this code below.
+//                val intent = Intent(this, LoginActivity::class.java)
+//                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+//                        Intent.FLAG_ACTIVITY_CLEAR_TASK // Afslut alle activities der måtte være i baggrunden.
+//                startActivity(intent)
+
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                 return true
             }

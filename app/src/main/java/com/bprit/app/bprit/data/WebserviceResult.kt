@@ -2,7 +2,7 @@ package com.bprit.app.bprit.data
 
 
 /**
- * TODO XML description
+ * Webservice result containing status for webservice call
  */
 class WebserviceResult {
     var error = ""

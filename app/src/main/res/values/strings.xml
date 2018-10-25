@@ -4,10 +4,31 @@
     <string name="demo_text">text</string>
     <string name="demo_date">date</string>
 
+    <!-- Dialogs -->
+    <string name="dialog_title">BPR-IT</string>
+    <string name="dialog_confirm_title">Bekræft venligst</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Annuller</string>
+    <string name="dialog_save">Gem</string>
+    <string name="dialog_yes">Ja</string>
+    <string name="dialog_no">Nej</string>
+    <string name="dialog_error">Fejl:</string>
+    <string name="dialog_error304">Din oprettelse / opdatering blev ikke udført, prøv igen senere ellers kontakt support</string>
+    <string name="dialog_error400">Der mangler informationer til at kunne udføre forespørgsel, kontakt support</string>
+    <string name="dialog_error401">Du mangler rettigheder til at udføre denne funktion, prøv at logge ud af app og ind igen, ellers kontakt support</string>
+    <string name="dialog_error404">Ressourcen blev ikke fundet, prøv at logge ud af app og ind igen, ellers kontakt support</string>
+    <string name="dialog_error500">Der opstod en fejl på webserveren, prøv igen lidt senere, ellers kontakt support</string>
+    <string name="dialog_error503">Webserveren fik timeout, prøv igen lidt senere, ellers kontakt support</string>
+    <string name="dialog_errorNoAddressAssociatedWithHostName">Kontroller venligst at enheden har forbindelse til internettet</string>
+    <string name="dialog_errorDefault">Ukendt fejl prøv at lukke app\'en og starte den op på ny</string>
+
     <!-- Login -->
     <string name="login_title">BPR-IT - Login</string>
+    <string name="login_logo">BPR-IT logo</string>
     <string name="login_signIn">Log ind</string>
     <string name="login_signOut">Log ud</string>
+    <string name="login_signInOffline">Log ind - offline</string>
+    <string name="login_menu">Gå til menu</string>
     <!--
     <string name="login_username">Brugernavn:</string>
     <string name="login_password">Kodeord:</string>
