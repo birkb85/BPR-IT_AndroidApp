@@ -24,7 +24,6 @@ class LoginActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         val fragment = supportFragmentManager.findFragmentById(R.id.container) as LoginFragment
-        fragment.onActivityResultTest(requestCode, resultCode, data)
-//        fragment.azureAD? // TODO
+        fragment.setAzureADOnActivityResult(requestCode, resultCode, data)
     }
 }
