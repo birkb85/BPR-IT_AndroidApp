@@ -54,6 +54,8 @@
     <!-- Component Type List -->
     <string name="componentTypeList_title">BPR-IT - Komponenttyper</string>
     <string name="componentTypeList_filter">Søg</string>
+    <string name="componentTypeList_name">Navn:</string>
+    <string name="componentTypeList_inStorage">Antal:</string>
 
     <!-- Component List -->
     <string name="componentList_title">BPR-IT - Komponenter</string>

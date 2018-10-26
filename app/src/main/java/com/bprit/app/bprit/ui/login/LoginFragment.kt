@@ -10,10 +10,14 @@ import com.bprit.app.bprit.R
 import android.widget.*
 import com.bprit.app.bprit.MenuActivity
 import android.content.Intent
+import com.bprit.app.bprit.data.RealmAzureAD
+import com.bprit.app.bprit.data.RealmComponentType
 import com.bprit.app.bprit.interfaces.CallbackAzureAD
 import com.bprit.app.bprit.models.ApplicationInformation
 import com.bprit.app.bprit.models.AzureAD
 import com.bprit.app.bprit.models.LoadingAlertDialog
+import io.realm.Realm
+import java.util.*
 
 
 class LoginFragment : Fragment() {
@@ -203,6 +207,28 @@ class LoginFragment : Fragment() {
             val applicationInformation = ApplicationInformation()
             val version = context.getString(R.string.login_version) + " " + applicationInformation.getVersion(context)
             versionTextView?.text = version
+        }
+
+        // TODO BB 2018-10-26. Remove at release. Test create componenttypes.
+        val realm = Realm.getDefaultInstance()
+        realm.beginTransaction()
+        try {
+            val realmComponentTypeRealmResults = realm.where(RealmAzureAD::class.java).findAll()
+            realmComponentTypeRealmResults?.let { results ->
+                if (results.size == 0) {
+                    for (i in 1..10) {
+                        // Create new objects in Realm
+                        val realmComponentType = RealmComponentType()
+                        realmComponentType.id = i
+                        realmComponentType.name = "Test $i"
+                        realmComponentType.inStorage = 10
+                        realm.copyToRealm(realmComponentType)
+                    }
+                }
+            }
+        } finally {
+            realm.commitTransaction()
+            realm.close()
         }
     }
 }
