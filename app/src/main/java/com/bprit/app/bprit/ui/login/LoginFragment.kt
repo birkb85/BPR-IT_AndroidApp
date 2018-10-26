@@ -11,9 +11,9 @@ import android.widget.*
 import com.bprit.app.bprit.MenuActivity
 import android.content.Intent
 import com.bprit.app.bprit.interfaces.CallbackAzureAD
-import com.bprit.app.bprit.model.ApplicationInformation
-import com.bprit.app.bprit.model.AzureAD
-import com.bprit.app.bprit.model.LoadingAlertDialog
+import com.bprit.app.bprit.models.ApplicationInformation
+import com.bprit.app.bprit.models.AzureAD
+import com.bprit.app.bprit.models.LoadingAlertDialog
 
 
 class LoginFragment : Fragment() {

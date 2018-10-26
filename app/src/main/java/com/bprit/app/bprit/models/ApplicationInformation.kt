@@ -1,8 +1,7 @@
-package com.bprit.app.bprit.model
+package com.bprit.app.bprit.models
 
 import android.content.Context
 import android.content.pm.PackageManager
-import com.bprit.app.bprit.R
 
 /**
  * Get information about application

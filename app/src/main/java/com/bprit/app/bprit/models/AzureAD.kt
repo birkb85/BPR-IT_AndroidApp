@@ -1,13 +1,7 @@
-package com.bprit.app.bprit.model
+package com.bprit.app.bprit.models
 
-import android.app.Activity
 import android.content.Intent
 import android.support.v4.app.FragmentActivity
-import android.util.Log
-import android.view.View
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
 import com.android.volley.*
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
@@ -15,13 +9,8 @@ import com.bprit.app.bprit.interfaces.CallbackAzureAD
 import com.microsoft.identity.client.*
 import org.json.JSONObject
 import java.util.HashMap
-import android.R.string.no
-import android.R.attr.description
 import com.bprit.app.bprit.data.RealmAzureAD
 import io.realm.Realm
-import org.json.JSONArray
-import java.nio.file.Files.delete
-import io.realm.Case
 
 // TODO BB 2018-10-25. App gets a token when logging in. This token should be renewed if it expires. Implement this.
 

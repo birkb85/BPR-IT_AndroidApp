@@ -1,10 +1,7 @@
-package com.bprit.app.bprit.model
+package com.bprit.app.bprit.models
 
 import com.bprit.app.bprit.data.RealmAzureAD
 import io.realm.Realm
-import java.util.*
-import java.text.ParseException
-import java.text.SimpleDateFormat
 
 
 /**

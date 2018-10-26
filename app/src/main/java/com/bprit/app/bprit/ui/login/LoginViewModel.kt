@@ -1,8 +1,8 @@
 package com.bprit.app.bprit.ui.login
 
 import android.arch.lifecycle.ViewModel
-import com.bprit.app.bprit.model.AzureAD
-import com.bprit.app.bprit.model.LoadingAlertDialog
+import com.bprit.app.bprit.models.AzureAD
+import com.bprit.app.bprit.models.LoadingAlertDialog
 
 class LoginViewModel : ViewModel() {
     // Implement the ViewModel

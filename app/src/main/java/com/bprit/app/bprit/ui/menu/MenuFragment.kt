@@ -4,21 +4,15 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.bprit.app.bprit.ComponentListActivity
 import com.bprit.app.bprit.ComponentTypeListActivity
 import com.bprit.app.bprit.R
 import com.bprit.app.bprit.TaskListActivity
-import com.bprit.app.bprit.data.WebserviceResult
-import com.bprit.app.bprit.interfaces.CallbackWebserviceResult
-import com.bprit.app.bprit.model.DateTimeFunctions
-import com.bprit.app.bprit.model.Global
-import com.bprit.app.bprit.model.UserFunctions
-import com.bprit.app.bprit.model.Webservice
+import com.bprit.app.bprit.models.DateTimeFunctions
+import com.bprit.app.bprit.models.UserFunctions
 
 class MenuFragment : Fragment() {
 

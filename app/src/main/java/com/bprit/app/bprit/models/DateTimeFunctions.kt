@@ -1,4 +1,4 @@
-package com.bprit.app.bprit.model
+package com.bprit.app.bprit.models
 
 import java.util.*
 import java.text.ParseException

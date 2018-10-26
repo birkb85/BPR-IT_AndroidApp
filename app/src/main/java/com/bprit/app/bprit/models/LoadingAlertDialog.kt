@@ -1,15 +1,9 @@
-package com.bprit.app.bprit.model
+package com.bprit.app.bprit.models
 
-import android.content.Context
-import android.content.pm.PackageManager
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import com.bprit.app.bprit.R
 import android.widget.TextView
-import android.view.LayoutInflater
-
-
-
 
 
 /**

@@ -1,4 +1,4 @@
-package com.bprit.app.bprit.model
+package com.bprit.app.bprit.models
 
 import android.app.Application
 import android.content.Context
@@ -38,8 +38,7 @@ class Global : Application() {
         // The Realm file will be located in Context.getFilesDir() with name "default.realm"
 
         // Debug realm
-        val config =
-            RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build() // Only while developing the app!!!
+        val config = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build() // Only while developing the app!!!
 
         // Release realm
         // To make an migration bump "schemaVersion" 1 up and write the changes in the method "realmMigration".

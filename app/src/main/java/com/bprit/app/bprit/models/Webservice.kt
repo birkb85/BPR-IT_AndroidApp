@@ -1,6 +1,5 @@
-package com.bprit.app.bprit.model
+package com.bprit.app.bprit.models
 
-import android.net.Uri
 import android.util.Log
 import com.bprit.app.bprit.data.RealmAzureAD
 import com.bprit.app.bprit.data.WebserviceResult
@@ -35,6 +34,11 @@ class Webservice {
      * @return Status API url
      */
     fun getApiStatusUrl(): String = "http://bpr-status.evihmpjzgs.eu-west-1.elasticbeanstalk.com"
+
+    /**
+     * @return Status API url
+     */
+    fun getApiStorageUrl(): String = "http://bpr-storage.5xq2m7ipib.eu-west-1.elasticbeanstalk.com"
 
     /**
      * Webservice API communication
@@ -314,7 +318,7 @@ class Webservice {
      * Testing Status API
      * @param callback callback for result of webservice call
      */
-    fun testStatus(
+    fun testStatusTypes(
         callback: CallbackWebserviceResult
     ) {
         val url = getApiStatusUrl() + "/status-types"
