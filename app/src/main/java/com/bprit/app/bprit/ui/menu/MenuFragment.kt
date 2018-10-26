@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.bprit.app.bprit.ComponentListActivity
+import com.bprit.app.bprit.ComponentTypeListActivity
 import com.bprit.app.bprit.R
 import com.bprit.app.bprit.TaskListActivity
 import com.bprit.app.bprit.data.WebserviceResult
@@ -62,42 +63,42 @@ class MenuFragment : Fragment() {
 
         tasksLinearLayout?.setOnClickListener {
 
-            val webservice = Webservice()
-            webservice.testStatus(object : CallbackWebserviceResult {
-                override fun callbackCall(result: WebserviceResult) {
-                    if (result.success) {
-                        Log.d("DEBUG", "success: " + result.success.toString())
-                        Log.d("DEBUG", "error: " + result.error)
-                    } else {
-                        activity?.let { act ->
-                            act.runOnUiThread {
-                                val global = Global()
-                                global.getErrorAlertDialog(
-                                    act,
-                                    global.errorMessage(
-                                        act,
-                                        result.error
-                                    ),
-                                    null
-                                ).show()
-                            }
-                        }
-                    }
-                }
-            })
+//            val webservice = Webservice()
+//            webservice.testStatus(object : CallbackWebserviceResult {
+//                override fun callbackCall(result: WebserviceResult) {
+//                    if (result.success) {
+//                        Log.d("DEBUG", "success: " + result.success.toString())
+//                        Log.d("DEBUG", "error: " + result.error)
+//                    } else {
+//                        activity?.let { act ->
+//                            act.runOnUiThread {
+//                                val global = Global()
+//                                global.getErrorAlertDialog(
+//                                    act,
+//                                    global.errorMessage(
+//                                        act,
+//                                        result.error
+//                                    ),
+//                                    null
+//                                ).show()
+//                            }
+//                        }
+//                    }
+//                }
+//            })
 
-//            // TODO BB 2018-10-17. Temp go to task list.
-//            activity?.let { fragmentActivity ->
-//                val intent = Intent(context, TaskListActivity::class.java)
-//                startActivity(intent)
-//                fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-//            }
+            // TODO BB 2018-10-17. Temp go to task list.
+            activity?.let { fragmentActivity ->
+                val intent = Intent(context, TaskListActivity::class.java)
+                startActivity(intent)
+                fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            }
         }
 
         componentsLinearLayout?.setOnClickListener {
-            // TODO BB 2018-10-17. Temp go to component list.
+            // TODO BB 2018-10-17. Temp go to component type list.
             activity?.let { fragmentActivity ->
-                val intent = Intent(context, ComponentListActivity::class.java)
+                val intent = Intent(context, ComponentTypeListActivity::class.java)
                 startActivity(intent)
                 fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }

@@ -6,16 +6,16 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import com.bprit.app.bprit.ui.taskdetails.TaskDetailsFragment
+import com.bprit.app.bprit.ui.componenttypelist.ComponentTypeListFragment
 
-class TaskDetailsActivity : AppCompatActivity() {
+class ComponentTypeListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.task_details_activity)
+        setContentView(R.layout.component_type_list_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, TaskDetailsFragment.newInstance())
+                .replace(R.id.container, ComponentTypeListFragment.newInstance())
                 .commitNow()
         }
     }
@@ -34,7 +34,7 @@ class TaskDetailsActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_task_details, menu)
+        menuInflater.inflate(R.menu.menu_component_type_list, menu)
         return true
     }
 

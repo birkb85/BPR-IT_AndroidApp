@@ -1,20 +1,21 @@
-package com.bprit.app.bprit.ui.componentlist
+package com.bprit.app.bprit.ui.componenttypelist
 
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import com.bprit.app.bprit.R
-import android.support.v7.widget.RecyclerView
 import com.bprit.app.bprit.ComponentDetailsActivity
+import com.bprit.app.bprit.ComponentListActivity
+import com.bprit.app.bprit.R
 
-class ComponentListFragment : Fragment() {
+class ComponentTypeListFragment : Fragment() {
 
     var filterEditText: EditText? = null
     var detailsButton: Button? = null
@@ -22,21 +23,21 @@ class ComponentListFragment : Fragment() {
     var recyclerView: RecyclerView? = null
 
     companion object {
-        fun newInstance() = ComponentListFragment()
+        fun newInstance() = ComponentTypeListFragment()
     }
 
-    private lateinit var viewModel: ComponentListViewModel
+    private lateinit var viewModel: ComponentTypeListViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.component_list_fragment, container, false)
+        return inflater.inflate(R.layout.component_type_list_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(ComponentListViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(ComponentTypeListViewModel::class.java)
         // Use the ViewModel
 
         // Set views
@@ -46,9 +47,9 @@ class ComponentListFragment : Fragment() {
         recyclerView = activity?.findViewById(R.id.recyclerView)
 
         detailsButton?.setOnClickListener {
-            // TODO BB 2018-10-17. Temp go to component details.
+            // TODO BB 2018-10-17. Temp go to component list.
             activity?.let { fragmentActivity ->
-                val intent = Intent(context, ComponentDetailsActivity::class.java)
+                val intent = Intent(context, ComponentListActivity::class.java)
                 startActivity(intent)
                 fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }

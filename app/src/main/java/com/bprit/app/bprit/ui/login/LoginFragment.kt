@@ -13,6 +13,7 @@ import android.content.Intent
 import com.bprit.app.bprit.interfaces.CallbackAzureAD
 import com.bprit.app.bprit.model.ApplicationInformation
 import com.bprit.app.bprit.model.AzureAD
+import com.bprit.app.bprit.model.LoadingAlertDialog
 
 
 class LoginFragment : Fragment() {
@@ -78,6 +79,20 @@ class LoginFragment : Fragment() {
         viewModel.azureAD?.onActivityResult(requestCode, resultCode, data)
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        // Restore loading
+        viewModel.loadingAlertDialog?.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // Close Loading Alert Dialog
+        viewModel.loadingAlertDialog?.onPause()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -90,16 +105,16 @@ class LoginFragment : Fragment() {
         // Use the ViewModel
 
         // Set views
-//        nameTextView = activity?.findViewById(R.id.nameTextView)
-//        dataTextView = activity?.findViewById(R.id.dataTextView)
         signInOutButton = activity?.findViewById(R.id.signInOutButton)
         menuButton = activity?.findViewById(R.id.menuButton)
-//        linearLayout = activity?.findViewById(R.id.linearLayout)
-//        usernameEditText = activity?.findViewById(R.id.usernameEditText)
-//        passwordEditText = activity?.findViewById(R.id.passwordEditText)
-//        rememberCheckBox = activity?.findViewById(R.id.rememberCheckBox)
-//        loginButton = activity?.findViewById(R.id.loginButton)
         versionTextView = activity?.findViewById(R.id.versionTextView)
+
+        // Init loading dialog
+        if (viewModel.loadingAlertDialog == null) {
+            activity?.let { act ->
+                viewModel.loadingAlertDialog = LoadingAlertDialog(act)
+            }
+        }
 
         // Init AzureAD
         if (viewModel.azureAD == null) {
@@ -144,6 +159,10 @@ class LoginFragment : Fragment() {
                     menuButton?.visibility = View.GONE
                     viewModel.isSignedIn = false
                 }
+
+                activity?.let {act ->
+                    viewModel.loadingAlertDialog?.setLoading(act, false, "")
+                }
             }
         })
 
@@ -158,8 +177,14 @@ class LoginFragment : Fragment() {
 
         signInOutButton?.setOnClickListener {
             if (!viewModel.isSignedIn) {
+                activity?.let {act ->
+                    viewModel.loadingAlertDialog?.setLoading(act, true, getString(R.string.dialog_loading_login))
+                }
                 viewModel.azureAD?.onCallGraphClicked()
             } else {
+                activity?.let {act ->
+                    viewModel.loadingAlertDialog?.setLoading(act, true, getString(R.string.dialog_loading_logout))
+                }
                 viewModel.azureAD?.onSignOutClicked()
             }
         }

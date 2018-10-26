@@ -35,7 +35,7 @@
                         android:layout_height="wrap_content"
                         style="@style/editText"
                         android:id="@+id/filterEditText"
-                        android:hint="@string/tasklist_filter"
+                        android:hint="@string/taskList_filter"
                         android:imeOptions="actionDone"
                         android:inputType="textCapSentences"/>
             </LinearLayout>

@@ -4,6 +4,9 @@
     <string name="demo_text">text</string>
     <string name="demo_date">date</string>
 
+    <!-- Menus -->
+    <string name="menu_sync">Sync</string>
+
     <!-- Dialogs -->
     <string name="dialog_title">BPR-IT</string>
     <string name="dialog_confirm_title">Bekræft venligst</string>
@@ -22,6 +25,11 @@
     <string name="dialog_errorNoAddressAssociatedWithHostName">Kontroller venligst at enheden har forbindelse til internettet</string>
     <string name="dialog_errorDefault">Ukendt fejl prøv at lukke app\'en og starte den op på ny</string>
 
+    <!-- Dialog Loading -->
+    <string name="dialog_loading_pleaseWait">Vent venligst&#8230;</string>
+    <string name="dialog_loading_login">Logger ind</string>
+    <string name="dialog_loading_logout">Logger ud</string>
+
     <!-- Login -->
     <string name="login_title">BPR-IT - Login</string>
     <string name="login_logo">BPR-IT logo</string>
@@ -29,13 +37,7 @@
     <string name="login_signOut">Log ud</string>
     <string name="login_signInOffline">Log ind - offline</string>
     <string name="login_menu">Gå til menu</string>
-    <!--
-    <string name="login_username">Brugernavn:</string>
-    <string name="login_password">Kodeord:</string>
-    <string name="login_remember">Husk oplysninger</string>
-    <string name="login_login">Login</string>
-    -->
-    <string name="login_version">version: </string>
+    <string name="login_version">version:</string>
 
     <!-- Menu -->
     <string name="menu_title">BPR-IT - Menu</string>
@@ -43,17 +45,21 @@
     <string name="menu_components">Komponenter</string>
 
     <!-- Task List -->
-    <string name="tasklist_title">BPR-IT - Opgave liste</string>
-    <string name="tasklist_filter">Søg</string>
+    <string name="taskList_title">BPR-IT - Opgaver</string>
+    <string name="taskList_filter">Søg</string>
 
     <!-- Task Details -->
-    <string name="taskdetails_title">BPR-IT - Opgave detaljer</string>
+    <string name="taskDetails_title">BPR-IT - Opgavedetaljer</string>
+
+    <!-- Component Type List -->
+    <string name="componentTypeList_title">BPR-IT - Komponenttyper</string>
+    <string name="componentTypeList_filter">Søg</string>
 
     <!-- Component List -->
-    <string name="componentlist_title">BPR-IT - Komponent liste</string>
-    <string name="componentlist_filter">Søg</string>
+    <string name="componentList_title">BPR-IT - Komponenter</string>
+    <string name="componentList_filter">Søg</string>
 
     <!-- Component Details -->
-    <string name="componentdetails_title">BPR-IT - Komponent detaljer</string>
+    <string name="componentDetails_title">BPR-IT - Komponentdetaljer</string>
 
 </resources>

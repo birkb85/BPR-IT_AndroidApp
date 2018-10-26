@@ -5,9 +5,16 @@ import android.os.Bundle
 import com.bprit.app.bprit.ui.menu.MenuFragment
 import android.content.Intent
 import android.view.KeyEvent
+import android.R.attr.fragment
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 
 
 class MenuActivity : AppCompatActivity() {
+
+    // BB 2018-10-26. Unused (used in three dot menu)
+//    private val MENU_APPROVE = Menu.FIRST
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,4 +44,48 @@ class MenuActivity : AppCompatActivity() {
         }
         return super.onKeyDown(keyCode, event)
     }
-}
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.action_sync -> {
+                Toast.makeText(this, "Clicked: Menu Sync", Toast.LENGTH_SHORT).show();
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+        // BB 2018-10-26. How to create three dots menu
+//    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+////        val fragment = supportFragmentManager.findFragmentById(R.id.container) as MenuFragment
+//        menu.clear()
+////        if (fragment.getShowMenuOptionApprove()) menu.add(0, MENU_APPROVE, Menu.NONE, "Test")
+//        menu.add(0, MENU_APPROVE, Menu.NONE, "Test")
+//        return super.onPrepareOptionsMenu(menu)
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        val id = item.getItemId()
+//
+//        val fragment = supportFragmentManager.findFragmentById(R.id.container) as MenuFragment
+//
+//        when (id) {
+//            MENU_APPROVE -> {
+////                fragment.approveDay()
+//                return true
+//            }
+//        }
+//
+//        return super.onOptionsItemSelected(item)
+//    }
+    }
