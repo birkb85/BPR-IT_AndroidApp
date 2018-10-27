@@ -17,7 +17,10 @@ import io.realm.Case
 import io.realm.Realm
 import io.realm.Sort
 
-
+/**
+ * Component type list recycler adaptor
+ * @param componentTypeListRecyclerViewOnClickListener cell on click listener
+ */
 class ComponentTypeListRecyclerAdapter(
     private val componentTypeListRecyclerViewOnClickListener: ComponentTypeListRecyclerViewOnClickListener
 ) : RecyclerView.Adapter<ComponentTypeListRecyclerAdapter.ViewHolder>() {
@@ -25,6 +28,10 @@ class ComponentTypeListRecyclerAdapter(
     private var realm: Realm? = null
     private var realmComponentTypeRealmResults: RealmResults<RealmComponentType>? = null
 
+    /**
+     * View holder for adaptor
+     * @param view view for the viewholder
+     */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private var v = view
         var nameTextView: TextView = view.findViewById(R.id.nameTextView)
@@ -43,6 +50,10 @@ class ComponentTypeListRecyclerAdapter(
     init {
     }
 
+    /**
+     * Filter list of cells in adaptor by string
+     * @param filter only show cells which contains this filter
+     */
     fun filterList(filter: String) {
         val fieldNames = arrayOf("name")
         val sortOrders = arrayOf(Sort.ASCENDING)

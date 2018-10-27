@@ -232,15 +232,18 @@ class LoginFragment : Fragment() {
             realmComponentRealmResults?.let { results ->
                 if (results.size == 0) {
                     for (i in 1..10) {
-                        // Create new objects in Realm
-                        val realmComponentType = RealmComponentType()
-                        realmComponentType.id = 1
-                        realmComponentType.name = "Test 1"
-                        realmComponentType.inStorage = 10
+                        val realmComponentType = realm.where(RealmComponentType::class.java).equalTo("id", 1 as Int).findFirst()
+                        if (realmComponentType == null) {
+                            val realmComponentTypeNew = RealmComponentType()
+                            realmComponentTypeNew.id = 1
+                            realmComponentTypeNew.name = "Test 1"
+                            realmComponentTypeNew.inStorage = 10
+                            realm.copyToRealm(realmComponentTypeNew)
+                        }
 
                         val realmComponent = RealmComponent()
-                        realmComponent.id = i
-                        realmComponent.type = realmComponentType
+                        realmComponent.id = i.toString()
+                        realmComponent.typeId = 1
                         if (i == 9) {
                             realmComponent.isDeleted = true
                             realmComponent.shouldSynchronize = true

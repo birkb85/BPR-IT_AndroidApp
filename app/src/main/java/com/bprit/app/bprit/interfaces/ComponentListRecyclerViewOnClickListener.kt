@@ -11,5 +11,5 @@ interface ComponentListRecyclerViewOnClickListener {
      * @param view the view clicked
      * @param id the id of the component
      */
-    fun onClick(view: View, id: Int)
+    fun onClick(view: View, id: Int?)
 }

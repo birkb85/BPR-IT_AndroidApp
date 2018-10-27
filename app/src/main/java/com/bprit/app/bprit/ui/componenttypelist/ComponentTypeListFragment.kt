@@ -30,7 +30,6 @@ import com.bprit.app.bprit.models.LoadingAlertDialog
 class ComponentTypeListFragment : Fragment() {
 
     var filterEditText: EditText? = null
-    var detailsButton: Button? = null
     var swipeRefreshLayout: SwipeRefreshLayout? = null
     var recyclerView: RecyclerView? = null
 
@@ -43,7 +42,7 @@ class ComponentTypeListFragment : Fragment() {
 
     private lateinit var viewModel: ComponentTypeListViewModel
 
-    var filterEditTextTextWatcher: TextWatcher = object : TextWatcher {
+    private var filterEditTextTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
 
         }
@@ -53,28 +52,34 @@ class ComponentTypeListFragment : Fragment() {
         }
 
         override fun afterTextChanged(editable: Editable) {
-            filterEditText?.let { editText ->
-                componentTypeListRecyclerAdapter?.filterList(editText.text.toString())
-            }
+            filterList()
         }
     }
 
-    var componentTypeListRecyclerViewOnClickListener: ComponentTypeListRecyclerViewOnClickListener =
+    private fun filterList() {
+        filterEditText?.let { editText ->
+            componentTypeListRecyclerAdapter?.filterList(editText.text.toString())
+        }
+    }
+
+    private var componentTypeListRecyclerViewOnClickListener: ComponentTypeListRecyclerViewOnClickListener =
         object : ComponentTypeListRecyclerViewOnClickListener {
             override fun onClick(view: View, id: Int?) {
-                Toast.makeText(context, "id: $id", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, "id: $id", Toast.LENGTH_SHORT).show()
 
-//                activity?.let { fragmentActivity ->
-//                    val intent = Intent(context, ComponentListActivity::class.java)
-//                    intent.putExtra("typeId", id)
-//                    startActivity(intent)
-//                    fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-//                }
+                activity?.let { fragmentActivity ->
+                    val intent = Intent(context, ComponentListActivity::class.java)
+                    intent.putExtra("componentTypeId", id)
+                    startActivity(intent)
+                    fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                }
             }
         }
 
     override fun onResume() {
         super.onResume()
+
+        filterList()
 
         // Restore loading
         viewModel.loadingAlertDialog?.onResume()
@@ -101,7 +106,6 @@ class ComponentTypeListFragment : Fragment() {
 
         // Set views
         filterEditText = activity?.findViewById(R.id.filterEditText)
-        detailsButton = activity?.findViewById(R.id.detailsButton)
         swipeRefreshLayout = activity?.findViewById(R.id.swipeRefreshLayout)
         recyclerView = activity?.findViewById(R.id.recyclerView)
 
@@ -113,15 +117,6 @@ class ComponentTypeListFragment : Fragment() {
         }
 
         filterEditText?.addTextChangedListener(filterEditTextTextWatcher)
-
-        detailsButton?.setOnClickListener {
-            // TODO BB 2018-10-17. Temp go to component list.
-            activity?.let { fragmentActivity ->
-                val intent = Intent(context, ComponentListActivity::class.java)
-                startActivity(intent)
-                fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-            }
-        }
 
         // Recycler view
         recyclerView?.setHasFixedSize(false)

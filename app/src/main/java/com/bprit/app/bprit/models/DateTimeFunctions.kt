@@ -50,7 +50,29 @@ class DateTimeFunctions {
             } catch (e: ParseException) {
 //                Crashlytics.logException(e)
             }
+        }
 
+        return beautifulDate
+    }
+
+    /**
+     * Make date beautiful
+     * @param date date formatted as 'yyyy-MM-dd'
+     * @return date formatted as 'dd.MM.yyyy'
+     */
+    fun beautifyDate(date: Date?): String? {
+        var beautifulDate = ""
+
+        date?.let {d ->
+            try {
+                val calendar = getLocalizedCalendar()
+                calendar.time = d
+                val simpleDateFormatAfter = SimpleDateFormat("dd.MM.yyyy", Locale.US)
+                simpleDateFormatAfter.calendar = calendar
+                beautifulDate = simpleDateFormatAfter.format(calendar.time)
+            } catch (e: ParseException) {
+//                Crashlytics.logException(e)
+            }
         }
 
         return beautifulDate

@@ -34,9 +34,9 @@ class Webservice {
     fun getApiStatusUrl(): String = "http://bpr-status.evihmpjzgs.eu-west-1.elasticbeanstalk.com"
 
     /**
-     * @return Status API url
+     * @return Storage API url
      */
-    fun getApiStorageUrl(): String = "http://bpr-storage.5xq2m7ipib.eu-west-1.elasticbeanstalk.com"
+    fun getApiStorageUrl(): String = "http://bpr-storage.pkm4p6b32g.eu-west-1.elasticbeanstalk.com/"
 
     /**
      * Webservice API communication
