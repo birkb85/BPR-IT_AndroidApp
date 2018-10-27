@@ -6,6 +6,8 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import com.bprit.app.bprit.interfaces.CallbackSynchronizeData
+import com.bprit.app.bprit.models.SynchronizeData
 import com.bprit.app.bprit.ui.componentlist.ComponentListFragment
 
 class ComponentListActivity : AppCompatActivity() {
@@ -35,13 +37,23 @@ class ComponentListActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_component_list, menu)
+
+        val actionSync = menu.findItem(R.id.action_sync)
+        val synchronizeData = SynchronizeData()
+        actionSync.isVisible = synchronizeData.shouldSynchronizeData()
+
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_sync -> {
-                Toast.makeText(this, "Clicked: Menu Sync", Toast.LENGTH_SHORT).show();
+                val synchronizeData = SynchronizeData()
+                synchronizeData.synchronizeData(object : CallbackSynchronizeData {
+                    override fun callbackCall(success: Boolean) {
+                        item.isVisible = !success
+                    }
+                })
                 return true
             }
         }

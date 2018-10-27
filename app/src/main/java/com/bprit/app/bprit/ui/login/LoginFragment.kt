@@ -11,6 +11,7 @@ import android.widget.*
 import com.bprit.app.bprit.MenuActivity
 import android.content.Intent
 import com.bprit.app.bprit.data.AzureADGraphResponse
+import com.bprit.app.bprit.data.RealmComponent
 import com.bprit.app.bprit.data.RealmComponentType
 import com.bprit.app.bprit.interfaces.CallbackAzureAD
 import com.bprit.app.bprit.models.ApplicationInformation
@@ -205,26 +206,52 @@ class LoginFragment : Fragment() {
             versionTextView?.text = version
         }
 
-//        // BB 2018-10-26. Remove at release. Test create componenttypes.
-//        val realm = Realm.getDefaultInstance()
-//        realm.beginTransaction()
-//        try {
-//            val realmComponentTypeRealmResults = realm.where(RealmComponentType::class.java).findAll()
-//            realmComponentTypeRealmResults?.let { results ->
-//                if (results.size == 0) {
-//                    for (i in 1..10) {
-//                        // Create new objects in Realm
-//                        val realmComponentType = RealmComponentType()
-//                        realmComponentType.id = i
-//                        realmComponentType.name = "Test $i"
-//                        realmComponentType.inStorage = 10
-//                        realm.copyToRealm(realmComponentType)
-//                    }
-//                }
-//            }
-//        } finally {
-//            realm.commitTransaction()
-//            realm.close()
-//        }
+        // BB 2018-10-26. Remove at release. Test create componenttypes.
+        val realm = Realm.getDefaultInstance()
+        realm.beginTransaction()
+        try {
+            val realmComponentTypeRealmResults = realm.where(RealmComponentType::class.java).findAll()
+            realmComponentTypeRealmResults?.let { results ->
+                if (results.size == 0) {
+                    for (i in 1..10) {
+                        // Create new objects in Realm
+                        val realmComponentType = RealmComponentType()
+                        realmComponentType.id = i
+                        realmComponentType.name = "Test $i"
+                        realmComponentType.inStorage = 10
+//                        if (i == 9) {
+//                            realmComponentType.isDeleted = true
+//                            realmComponentType.shouldSynchronize = true
+//                        }
+                        realm.copyToRealm(realmComponentType)
+                    }
+                }
+            }
+
+            val realmComponentRealmResults = realm.where(RealmComponent::class.java).findAll()
+            realmComponentRealmResults?.let { results ->
+                if (results.size == 0) {
+                    for (i in 1..10) {
+                        // Create new objects in Realm
+                        val realmComponentType = RealmComponentType()
+                        realmComponentType.id = 1
+                        realmComponentType.name = "Test 1"
+                        realmComponentType.inStorage = 10
+
+                        val realmComponent = RealmComponent()
+                        realmComponent.id = i
+                        realmComponent.type = realmComponentType
+                        if (i == 9) {
+                            realmComponent.isDeleted = true
+                            realmComponent.shouldSynchronize = true
+                        }
+                        realm.copyToRealm(realmComponent)
+                    }
+                }
+            }
+        } finally {
+            realm.commitTransaction()
+            realm.close()
+        }
     }
 }

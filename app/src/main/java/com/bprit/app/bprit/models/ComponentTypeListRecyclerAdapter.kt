@@ -46,7 +46,9 @@ class ComponentTypeListRecyclerAdapter(
     fun filterList(filter: String) {
         val fieldNames = arrayOf("name")
         val sortOrders = arrayOf(Sort.ASCENDING)
-        realmComponentTypeRealmResults = realm?.where(RealmComponentType::class.java)?.contains("name", filter, Case.INSENSITIVE)?.sort(fieldNames, sortOrders)?.findAll()
+        realmComponentTypeRealmResults =
+                realm?.where(RealmComponentType::class.java)?.contains("name", filter, Case.INSENSITIVE)
+                    ?.equalTo("isDeleted", false)?.sort(fieldNames, sortOrders)?.findAll()
         notifyDataSetChanged()
     }
 
@@ -94,7 +96,9 @@ class ComponentTypeListRecyclerAdapter(
 
         val fieldNames = arrayOf("name")
         val sortOrders = arrayOf(Sort.ASCENDING)
-        realmComponentTypeRealmResults = realm?.where(RealmComponentType::class.java)?.sort(fieldNames, sortOrders)?.findAll()
+        realmComponentTypeRealmResults =
+                realm?.where(RealmComponentType::class.java)?.equalTo("isDeleted", false)?.sort(fieldNames, sortOrders)
+                    ?.findAll()
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {

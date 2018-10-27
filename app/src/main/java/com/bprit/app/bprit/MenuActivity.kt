@@ -9,6 +9,8 @@ import android.R.attr.fragment
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import com.bprit.app.bprit.interfaces.CallbackSynchronizeData
+import com.bprit.app.bprit.models.SynchronizeData
 
 
 class MenuActivity : AppCompatActivity() {
@@ -48,13 +50,23 @@ class MenuActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_menu, menu)
+
+        val actionSync = menu.findItem(R.id.action_sync)
+        val synchronizeData = SynchronizeData()
+        actionSync.isVisible = synchronizeData.shouldSynchronizeData()
+
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_sync -> {
-                Toast.makeText(this, "Clicked: Menu Sync", Toast.LENGTH_SHORT).show();
+                val synchronizeData = SynchronizeData()
+                synchronizeData.synchronizeData(object : CallbackSynchronizeData {
+                    override fun callbackCall(success: Boolean) {
+                        item.isVisible = !success
+                    }
+                })
                 return true
             }
         }
@@ -62,7 +74,7 @@ class MenuActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-        // BB 2018-10-26. How to create three dots menu
+    // BB 2018-10-26. How to create three dots menu
 //    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
 ////        val fragment = supportFragmentManager.findFragmentById(R.id.container) as MenuFragment
 //        menu.clear()
@@ -88,4 +100,4 @@ class MenuActivity : AppCompatActivity() {
 //
 //        return super.onOptionsItemSelected(item)
 //    }
-    }
+}

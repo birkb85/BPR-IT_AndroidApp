@@ -71,16 +71,6 @@ class Webservice {
 
                 // Set AzureAD token as authorization header
                 connection.setRequestProperty("Authorization", "Bearer ${Global.azureAD?.getToken()}")
-//                var idToken = ""
-//                val realm = Realm.getDefaultInstance()
-//                val realmAzureAD: AzureADGraphResponse? = realm.where(AzureADGraphResponse::class.java).findFirst()
-//                realmAzureAD?.let { obj ->
-//                    idToken = obj.idToken
-//                }
-//                realm.close()
-//                if (idToken != "") {
-//                    connection.setRequestProperty("Authorization", "Bearer $idToken")
-//                }
 
                 connection.requestMethod = httpMethod
                 connection.connectTimeout = 120 * 1000
@@ -95,11 +85,16 @@ class Webservice {
                 }
 
                 var inputStream: InputStream? = null
-                if (connection.responseCode == 200) {
+                if (connection.inputStream != null) {
                     inputStream = connection.inputStream
                 } else {
                     inputStream = connection.errorStream
                 }
+//                if (connection.responseCode == 200) {
+//                    inputStream = connection.inputStream
+//                } else {
+//                    inputStream = connection.errorStream
+//                }
 
                 val bufferedInputStream = BufferedInputStream(inputStream)
                 val byteArrayOutputStream = ByteArrayOutputStream()
@@ -134,13 +129,13 @@ class Webservice {
     }
 
     /**
-     * Testing Orders API
+     * Get component types
      * @param callback callback for result of webservice call
      */
-    fun testOrder(
+    fun getComponentTypes(
         callback: CallbackWebserviceResult
     ) {
-        val url = getApiOrdersUrl() + "/orders"
+        val url = getApiStorageUrl() + "/component-types"
         val contentType = "application/json; charset=utf-8"
         val body = ""
 
@@ -152,7 +147,7 @@ class Webservice {
                     result.success = false
 
                 } else {
-                    if (statusCode == 200) {
+                    if (statusCode in 200..299) {
                         try {
                             val responseString = String(response, Charset.forName("UTF-8"))
                             val jsonObject = JSONObject(responseString)
@@ -187,17 +182,59 @@ class Webservice {
                             result.success = false
                         }
 
-                    } else if (statusCode == 403) {
-                        result.error = "403"
+                    } else {
+                        result.error = statusCode.toString()
                         result.success = false
+                    }
+                }
 
-                    } else if (statusCode == 500) {
+                callback.callbackCall(result)
+            }
+        })
+    }
+
+    /**
+     * Get all components
+     * @param callback callback for result of webservice call
+     */
+    fun getAllComponents(
+        callback: CallbackWebserviceResult
+    ) {
+        val url = getApiStorageUrl() + "/component-types/components"
+        val contentType = "application/json; charset=utf-8"
+        val body = ""
+
+        webservice(url, contentType, "GET", body, object : CallbackWebservice {
+            override fun callbackCall(response: ByteArray, error: String, statusCode: Int) {
+                val result = WebserviceResult()
+                if (error != "") {
+                    result.error = error
+                    result.success = false
+
+                } else {
+                    if (statusCode in 200..299) {
                         try {
                             val responseString = String(response, Charset.forName("UTF-8"))
                             val jsonObject = JSONObject(responseString)
 
-                            result.error = jsonObject.optString("statuscode")
-                            result.success = false
+                            Log.d("DEBUG", "responseString: " + responseString)
+
+//                            login.pin = jsonObject.optBoolean("pin")
+//                            login.sessionGUID = jsonObject.optString("sessionguid")
+
+//                            login.userData = WebserviceLoginUserData()
+//                            if (jsonObject.opt("userdata") != null) {
+//                                val jsonUserData = JSONObject(jsonObject.opt("userdata").toString())
+//                                login.userData.user_id = jsonUserData.optString("user_id")
+//                                login.userData.username = jsonUserData.optString("username")
+//                                login.userData.role = jsonUserData.optLong("role")
+//                                //                                Log.d("Debug", "login.userData.role: " + login.userData.role);
+//                                login.userData.required_app_version = jsonUserData.optString("required_app_version")
+//                                login.userData.default_location = jsonUserData.optString("default_location")
+//                            }
+
+                            result.error = ""
+                            result.success = true
 
                         } catch (e: JSONException) {
 //                            Crashlytics.logException(e)
@@ -211,8 +248,190 @@ class Webservice {
                         }
 
                     } else {
-                        //                        Log.e(TAG, "Webservice communication error: " + statusCode);
+                        result.error = statusCode.toString()
+                        result.success = false
+                    }
+                }
 
+                callback.callbackCall(result)
+            }
+        })
+    }
+
+    /**
+     * Get components for type
+     * @param callback callback for result of webservice call
+     */
+    fun getComponentsForType(
+        typeId: Int,
+        callback: CallbackWebserviceResult
+    ) {
+        val url = getApiStorageUrl() + "/component-types/$typeId/components"
+        val contentType = "application/json; charset=utf-8"
+        val body = ""
+
+        webservice(url, contentType, "GET", body, object : CallbackWebservice {
+            override fun callbackCall(response: ByteArray, error: String, statusCode: Int) {
+                val result = WebserviceResult()
+                if (error != "") {
+                    result.error = error
+                    result.success = false
+
+                } else {
+                    if (statusCode in 200..299) {
+                        try {
+                            val responseString = String(response, Charset.forName("UTF-8"))
+                            val jsonObject = JSONObject(responseString)
+
+                            Log.d("DEBUG", "responseString: " + responseString)
+
+//                            login.pin = jsonObject.optBoolean("pin")
+//                            login.sessionGUID = jsonObject.optString("sessionguid")
+
+//                            login.userData = WebserviceLoginUserData()
+//                            if (jsonObject.opt("userdata") != null) {
+//                                val jsonUserData = JSONObject(jsonObject.opt("userdata").toString())
+//                                login.userData.user_id = jsonUserData.optString("user_id")
+//                                login.userData.username = jsonUserData.optString("username")
+//                                login.userData.role = jsonUserData.optLong("role")
+//                                //                                Log.d("Debug", "login.userData.role: " + login.userData.role);
+//                                login.userData.required_app_version = jsonUserData.optString("required_app_version")
+//                                login.userData.default_location = jsonUserData.optString("default_location")
+//                            }
+
+                            result.error = ""
+                            result.success = true
+
+                        } catch (e: JSONException) {
+//                            Crashlytics.logException(e)
+                            if (result.error.equals("")) result.error = e.localizedMessage
+                            result.success = false
+
+                        } catch (e: UnsupportedEncodingException) {
+//                            Crashlytics.logException(e)
+                            if (result.error.equals("")) result.error = e.localizedMessage
+                            result.success = false
+                        }
+
+                    } else {
+                        result.error = statusCode.toString()
+                        result.success = false
+                    }
+                }
+
+                callback.callbackCall(result)
+            }
+        })
+    }
+
+    /**
+     * Delete component
+     * @param callback callback for result of webservice call
+     */
+    fun deleteComponent(
+        typeId: Int,
+        componentId: Int,
+        callback: CallbackWebserviceResult
+    ) {
+        val url = getApiStorageUrl() + "/component-types/$typeId/components/$componentId"
+        val contentType = "application/json; charset=utf-8"
+        val body = ""
+
+        webservice(url, contentType, "GET", body, object : CallbackWebservice {
+            override fun callbackCall(response: ByteArray, error: String, statusCode: Int) {
+                val result = WebserviceResult()
+                if (error != "") {
+                    result.error = error
+                    result.success = false
+
+                } else {
+                    if (statusCode in 200..299) {
+                        try {
+                            val responseString = String(response, Charset.forName("UTF-8"))
+                            val jsonObject = JSONObject(responseString)
+
+                            Log.d("DEBUG", "responseString: " + responseString)
+
+//                            login.pin = jsonObject.optBoolean("pin")
+//                            login.sessionGUID = jsonObject.optString("sessionguid")
+
+//                            login.userData = WebserviceLoginUserData()
+//                            if (jsonObject.opt("userdata") != null) {
+//                                val jsonUserData = JSONObject(jsonObject.opt("userdata").toString())
+//                                login.userData.user_id = jsonUserData.optString("user_id")
+//                                login.userData.username = jsonUserData.optString("username")
+//                                login.userData.role = jsonUserData.optLong("role")
+//                                //                                Log.d("Debug", "login.userData.role: " + login.userData.role);
+//                                login.userData.required_app_version = jsonUserData.optString("required_app_version")
+//                                login.userData.default_location = jsonUserData.optString("default_location")
+//                            }
+
+                            result.error = ""
+                            result.success = true
+
+                        } catch (e: JSONException) {
+//                            Crashlytics.logException(e)
+                            if (result.error.equals("")) result.error = e.localizedMessage
+                            result.success = false
+
+                        } catch (e: UnsupportedEncodingException) {
+//                            Crashlytics.logException(e)
+                            if (result.error.equals("")) result.error = e.localizedMessage
+                            result.success = false
+                        }
+
+                    } else {
+                        result.error = statusCode.toString()
+                        result.success = false
+                    }
+                }
+
+                callback.callbackCall(result)
+            }
+        })
+    }
+
+    /**
+     * Testing Orders API
+     * @param callback callback for result of webservice call
+     */
+    fun testOrder(
+        callback: CallbackWebserviceResult
+    ) {
+        val url = getApiOrdersUrl() + "/orders"
+        val contentType = "application/json; charset=utf-8"
+        val body = ""
+
+        webservice(url, contentType, "GET", body, object : CallbackWebservice {
+            override fun callbackCall(response: ByteArray, error: String, statusCode: Int) {
+                val result = WebserviceResult()
+                if (error != "") {
+                    result.error = error
+                    result.success = false
+
+                } else {
+                    if (statusCode in 200..299) {
+                        try {
+                            val responseString = String(response, Charset.forName("UTF-8"))
+                            val jsonObject = JSONObject(responseString)
+
+                            Log.d("DEBUG", "responseString: " + responseString)
+
+                            result.error = ""
+                            result.success = true
+
+                        } catch (e: JSONException) {
+//                            Crashlytics.logException(e)
+                            if (result.error.equals("")) result.error = e.localizedMessage
+                            result.success = false
+
+                        } catch (e: UnsupportedEncodingException) {
+//                            Crashlytics.logException(e)
+                            if (result.error.equals("")) result.error = e.localizedMessage
+                            result.success = false
+                        }
+
+                    } else {
                         result.error = statusCode.toString()
                         result.success = false
                     }
@@ -242,26 +461,12 @@ class Webservice {
                     result.success = false
 
                 } else {
-                    if (statusCode == 200) {
+                    if (statusCode in 200..299) {
                         try {
                             val responseString = String(response, Charset.forName("UTF-8"))
                             val jsonObject = JSONObject(responseString)
 
                             Log.d("DEBUG", "responseString: " + responseString)
-
-//                            login.pin = jsonObject.optBoolean("pin")
-//                            login.sessionGUID = jsonObject.optString("sessionguid")
-
-//                            login.userData = WebserviceLoginUserData()
-//                            if (jsonObject.opt("userdata") != null) {
-//                                val jsonUserData = JSONObject(jsonObject.opt("userdata").toString())
-//                                login.userData.user_id = jsonUserData.optString("user_id")
-//                                login.userData.username = jsonUserData.optString("username")
-//                                login.userData.role = jsonUserData.optLong("role")
-//                                //                                Log.d("Debug", "login.userData.role: " + login.userData.role);
-//                                login.userData.required_app_version = jsonUserData.optString("required_app_version")
-//                                login.userData.default_location = jsonUserData.optString("default_location")
-//                            }
 
                             result.error = ""
                             result.success = true
@@ -277,32 +482,7 @@ class Webservice {
                             result.success = false
                         }
 
-                    } else if (statusCode == 403) {
-                        result.error = "403"
-                        result.success = false
-
-                    } else if (statusCode == 500) {
-                        try {
-                            val responseString = String(response, Charset.forName("UTF-8"))
-                            val jsonObject = JSONObject(responseString)
-
-                            result.error = jsonObject.optString("statuscode")
-                            result.success = false
-
-                        } catch (e: JSONException) {
-//                            Crashlytics.logException(e)
-                            if (result.error.equals("")) result.error = e.localizedMessage
-                            result.success = false
-
-                        } catch (e: UnsupportedEncodingException) {
-//                            Crashlytics.logException(e)
-                            if (result.error.equals("")) result.error = e.localizedMessage
-                            result.success = false
-                        }
-
                     } else {
-                        //                        Log.e(TAG, "Webservice communication error: " + statusCode);
-
                         result.error = statusCode.toString()
                         result.success = false
                     }
@@ -332,26 +512,12 @@ class Webservice {
                     result.success = false
 
                 } else {
-                    if (statusCode == 200) {
+                    if (statusCode in 200..299) {
                         try {
                             val responseString = String(response, Charset.forName("UTF-8"))
                             val jsonObject = JSONObject(responseString)
 
                             Log.d("DEBUG", "responseString: " + responseString)
-
-//                            login.pin = jsonObject.optBoolean("pin")
-//                            login.sessionGUID = jsonObject.optString("sessionguid")
-
-//                            login.userData = WebserviceLoginUserData()
-//                            if (jsonObject.opt("userdata") != null) {
-//                                val jsonUserData = JSONObject(jsonObject.opt("userdata").toString())
-//                                login.userData.user_id = jsonUserData.optString("user_id")
-//                                login.userData.username = jsonUserData.optString("username")
-//                                login.userData.role = jsonUserData.optLong("role")
-//                                //                                Log.d("Debug", "login.userData.role: " + login.userData.role);
-//                                login.userData.required_app_version = jsonUserData.optString("required_app_version")
-//                                login.userData.default_location = jsonUserData.optString("default_location")
-//                            }
 
                             result.error = ""
                             result.success = true
@@ -367,32 +533,7 @@ class Webservice {
                             result.success = false
                         }
 
-                    } else if (statusCode == 403) {
-                        result.error = "403"
-                        result.success = false
-
-                    } else if (statusCode == 500) {
-                        try {
-                            val responseString = String(response, Charset.forName("UTF-8"))
-                            val jsonObject = JSONObject(responseString)
-
-                            result.error = jsonObject.optString("statuscode")
-                            result.success = false
-
-                        } catch (e: JSONException) {
-//                            Crashlytics.logException(e)
-                            if (result.error.equals("")) result.error = e.localizedMessage
-                            result.success = false
-
-                        } catch (e: UnsupportedEncodingException) {
-//                            Crashlytics.logException(e)
-                            if (result.error.equals("")) result.error = e.localizedMessage
-                            result.success = false
-                        }
-
                     } else {
-                        //                        Log.e(TAG, "Webservice communication error: " + statusCode);
-
                         result.error = statusCode.toString()
                         result.success = false
                     }
