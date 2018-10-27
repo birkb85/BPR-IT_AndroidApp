@@ -27,12 +27,21 @@ class Global : Application() {
          * Time interval when selecting time in spinner
          */
         fun getMinuteTimeInterval(): Int = 5
+
+        var isSignedIn: Boolean = false
+
+        var azureAD: AzureAD? = null
     }
 
 //    private var context: Context? = null
 
     override fun onCreate() {
         super.onCreate()
+
+        // Init AzureAD
+        if (azureAD == null) {
+            azureAD = AzureAD()
+        }
 
         Realm.init(this)
         // The Realm file will be located in Context.getFilesDir() with name "default.realm"
@@ -55,7 +64,7 @@ class Global : Application() {
         // ----------- DO NOT EDIT MIGRATIONS ABOVE THIS LINE --------------
 
 //        if (oldVersion < 1) {
-//            schema.create("RealmAzureAD")
+//            schema.create("AzureADGraphResponse")
 //                .addField("idToken", String::class.java)
 //        }
 

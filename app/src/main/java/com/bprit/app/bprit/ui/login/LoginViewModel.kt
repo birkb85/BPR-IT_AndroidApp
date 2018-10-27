@@ -8,8 +8,4 @@ class LoginViewModel : ViewModel() {
     // Implement the ViewModel
 
     var loadingAlertDialog: LoadingAlertDialog? = null
-
-    var isSignedIn: Boolean = false
-
-    var azureAD: AzureAD? = null
 }

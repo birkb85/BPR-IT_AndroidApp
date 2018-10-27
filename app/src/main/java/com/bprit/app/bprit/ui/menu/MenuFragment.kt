@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +12,11 @@ import android.widget.*
 import com.bprit.app.bprit.ComponentTypeListActivity
 import com.bprit.app.bprit.R
 import com.bprit.app.bprit.TaskListActivity
+import com.bprit.app.bprit.data.WebserviceResult
+import com.bprit.app.bprit.interfaces.CallbackWebserviceResult
 import com.bprit.app.bprit.models.DateTimeFunctions
-import com.bprit.app.bprit.models.UserFunctions
+import com.bprit.app.bprit.models.Global
+import com.bprit.app.bprit.models.Webservice
 
 class MenuFragment : Fragment() {
 
@@ -48,17 +52,17 @@ class MenuFragment : Fragment() {
         componentsLinearLayout = activity?.findViewById(R.id.componentsLinearLayout)
 
         // Set name
-        val userFunctions = UserFunctions()
-        nameTextView?.text = userFunctions.getDisplayName()
+        Global.azureAD?.getDisplayName()?.let {name ->
+            nameTextView?.text = name
+        }
 
         // Set date
         val dateTimeFunctions = DateTimeFunctions()
         dateTextView?.text = dateTimeFunctions.beautifyDate(dateTimeFunctions.getCurrentDate())
 
         tasksLinearLayout?.setOnClickListener {
-
 //            val webservice = Webservice()
-//            webservice.testStatus(object : CallbackWebserviceResult {
+//            webservice.testStatusTypes(object : CallbackWebserviceResult {
 //                override fun callbackCall(result: WebserviceResult) {
 //                    if (result.success) {
 //                        Log.d("DEBUG", "success: " + result.success.toString())

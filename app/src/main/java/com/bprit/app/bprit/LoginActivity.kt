@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.bprit.app.bprit.ui.login.LoginFragment
 import android.R.attr.fragment
 import android.view.KeyEvent
+import com.bprit.app.bprit.models.Global
 
 
 class LoginActivity : AppCompatActivity() {
@@ -23,8 +24,10 @@ class LoginActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        val fragment = supportFragmentManager.findFragmentById(R.id.container) as LoginFragment
-        fragment.setAzureADOnActivityResult(requestCode, resultCode, data)
+        Global.azureAD?.onActivityResult(requestCode, resultCode, data)
+
+//        val fragment = supportFragmentManager.findFragmentById(R.id.container) as LoginFragment
+//        fragment.setAzureADOnActivityResult(requestCode, resultCode, data)
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {

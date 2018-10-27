@@ -2,6 +2,7 @@ package com.bprit.app.bprit.models
 
 import android.content.Intent
 import android.support.v4.app.FragmentActivity
+import android.util.Log
 import com.android.volley.*
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
@@ -9,138 +10,155 @@ import com.bprit.app.bprit.interfaces.CallbackAzureAD
 import com.microsoft.identity.client.*
 import org.json.JSONObject
 import java.util.HashMap
-import com.bprit.app.bprit.data.RealmAzureAD
-import io.realm.Realm
+import com.bprit.app.bprit.data.AzureADGraphResponse
 
 // TODO BB 2018-10-25. App gets a token when logging in. This token should be renewed if it expires. Implement this.
 
 /**
  * Handling AzureAD communication
  * Example: https://docs.microsoft.com/en-us/azure/active-directory/develop/tutorial-v2-android
- * @param activity context of activity
+ * Heavily modified for our custom use
  */
-class AzureAD(private var activity: FragmentActivity) {
-
-    private var callback: CallbackAzureAD? = null
+class AzureAD {
 
     private val CLIENT_ID = "ea3501cb-f257-4d92-96e5-1f534d4343d1" //"[Enter the application Id here]";
     private val SCOPES = arrayOf("https://graph.microsoft.com/User.Read")
     private val MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me"
 
     /* UI & Debugging Variables */
-    private val TAG = "DEBUG" //MainActivity.class.getSimpleName();
-//    internal var callGraphButton: Button
-//    internal var signOutButton: Button
+    private val TAG = "DEBUG"
 
     /* Azure AD Variables */
-    private var sampleApp: PublicClientApplication? = null
+    private var azureADApp: PublicClientApplication? = null
     private var authResult: AuthenticationResult? = null
+    private var azureADGraphResponse: AzureADGraphResponse? = null
 
     /**
-     * Initialise AzureAD connection
+     * Sign in to Azure AD
+     * @param activity context
+     * @param callback callback to call when finished
      */
-    init {
-//        callGraphButton = findViewById(R.id.callGraph) as Button
-//        signOutButton = findViewById(R.id.clearCache) as Button
-
-//        callGraphButton.setOnClickListener { onCallGraphClicked() }
-
-//        signOutButton.setOnClickListener { onSignOutClicked() }
-
+    fun signIn(activity: FragmentActivity, callback: CallbackAzureAD) {
         /* Configure your sample app and save state for this activity */
-        sampleApp = null
-        if (sampleApp == null) {
-            sampleApp = PublicClientApplication(
+        azureADApp = null
+        if (azureADApp == null) {
+            azureADApp = PublicClientApplication(
                 activity.applicationContext,
                 CLIENT_ID
             )
         }
 
-        // BB 2018-10-23. Do not log in automatically
-//        /* Attempt to get a user and acquireTokenSilent
-//         * If this fails we do an interactive request
-//         */
-//        var users: List<User>? = null
-//
-//        try {
-//            users = sampleApp?.users
-//
-//            if (users != null && users.size == 1) {
-//                /* We have 1 user */
-//
-//                sampleApp?.acquireTokenSilentAsync(SCOPES, users[0], getAuthSilentCallback())
-//            } else {
-//                /* We have no user */
-//
-//                /* Let's do an interactive request */
-//                sampleApp?.acquireToken(activity, SCOPES, getAuthInteractiveCallback())
-//            }
-//        } catch (e: MsalClientException) {
+        /* Attempt to get a user and acquireTokenSilent
+         * If this fails we do an interactive request
+         */
+        try {
+            azureADApp?.let { app ->
+                val users = app.users
+
+                if (users != null && users.size == 1) {
+                    /* We have 1 user */
+
+                    azureADApp?.acquireTokenSilentAsync(SCOPES, users[0], getAuthSilentCallback(activity, callback))
+                } else {
+                    /* We have no user */
+
+                    /* Let's do an interactive request */
+                    azureADApp?.acquireToken(activity, SCOPES, getAuthInteractiveCallback(activity, callback))
+                }
+            }
+        } catch (e: MsalClientException) {
 //            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString())
-//
-//        } catch (e: IndexOutOfBoundsException) {
+            callCallback(callback,false, false)
+        } catch (e: IndexOutOfBoundsException) {
 //            Log.d(TAG, "User at this position does not exist: " + e.toString())
-//        }
+            callCallback(callback,false, false)
+        }
     }
 
     /**
-     * Set activity when activity is created
-     * @param activity context of activity
+     * Sign out of Azure AD
+     * @param activity context
+     * @param callback callback to call when finished
      */
-    fun setActivity(activity: FragmentActivity) {
-        this.activity = activity
+    fun signOut(activity: FragmentActivity, callback: CallbackAzureAD) {
+        /* Configure your sample app and save state for this activity */
+        azureADApp = null
+        if (azureADApp == null) {
+            azureADApp = PublicClientApplication(
+                activity.applicationContext,
+                CLIENT_ID
+            )
+        }
+
+        /* Attempt to get a user and remove their cookies from cache */
+        try {
+            azureADApp?.let { app ->
+                val users = app.users
+
+                if (users == null) {
+                    /* We have no users */
+
+                } else if (users.size == 1) {
+                    /* We have 1 user */
+                    /* Remove from token cache */
+                    app.remove(users[0])
+
+                } else {
+                    /* We have multiple users */
+                    for (i in users.indices) {
+                        app.remove(users[i])
+                    }
+                }
+            }
+
+            callCallback(callback,true, false)
+
+        } catch (e: MsalClientException) {
+//            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString())
+            callCallback(callback,false, true)
+
+        } catch (e: IndexOutOfBoundsException) {
+//            Log.d(TAG, "User at this position does not exist: " + e.toString())
+            callCallback(callback,false, true)
+        }
     }
 
     /**
-     * Set callback when activity is created
-     * @param callback callback for Azure AD calls
+     * Get Azure AD token
+     * @return token
      */
-    fun setCallback(callback: CallbackAzureAD) {
-        this.callback = callback
+    fun getToken() : String? {
+        return authResult?.idToken
     }
 
-    //
-    // App callbacks for MSAL
-    // ======================
-    // getAuthSilentCallback() - callback defined to handle acquireTokenSilent() case
-    // getAuthInteractiveCallback() - callback defined to handle acquireToken() case
-    //
+    /**
+     * Get Azure AD user display name
+     * @return display name
+     */
+    fun getDisplayName() : String? {
+        return azureADGraphResponse?.displayName
+    }
 
     /**
      * Callback method for acquireTokenSilent calls
-     * Looks if tokens are in the cache (refreshes if necessary and if we don't forceRefresh)
-     * else errors that we need to do an interactive request.
+     * Looks if tokens are in the cache (refreshes if necessary and if we don't forceRefresh else errors that we need to do an interactive request.
+     * @param activity context
+     * @param callback callback to call when finished
+     * @return callback with result
      */
-    private fun getAuthSilentCallback(): AuthenticationCallback {
+    private fun getAuthSilentCallback(activity: FragmentActivity, callback: CallbackAzureAD): AuthenticationCallback {
         return object : AuthenticationCallback {
             override fun onSuccess(authenticationResult: AuthenticationResult) {
                 /* Successfully got a token, call Graph now */
-//                Log.d(TAG, "Successfully authenticated")
-
-                // Save Token to Realm
-                val realm = Realm.getDefaultInstance()
-                realm.beginTransaction()
-                try {
-                    // Remove old object from Realm
-                    realm.delete(RealmAzureAD::class.java)
-
-                    // Create new object in Realm
-                    val realmAzureAD = RealmAzureAD()
-                    realmAzureAD.idToken = authenticationResult.idToken
-                    realm.copyToRealm(realmAzureAD)
-                } finally {
-                    realm.commitTransaction()
-                    realm.close()
-                }
+                Log.d(TAG, "Successfully authenticated")
+                Log.d(TAG, "ID Token: " + authenticationResult.idToken)
+                Log.d(TAG, "Expires On: " + authenticationResult.expiresOn)
 
                 /* Store the authResult */
                 authResult = authenticationResult
 
                 /* call graph */
-                callGraphAPI()
-
-                /* update the UI to post call Graph state */
-                updateSuccessUI()
+                callGraphAPI(activity, callback)
             }
 
             override fun onError(exception: MsalException) {
@@ -155,76 +173,37 @@ class AzureAD(private var activity: FragmentActivity) {
                     /* Tokens expired or no session, retry with interactive */
                 }
 
-                // Remove info from Realm
-                val realm = Realm.getDefaultInstance()
-                realm.beginTransaction()
-                try {
-                    // Remove old object from Realm
-                    realm.delete(RealmAzureAD::class.java)
-                } finally {
-                    realm.commitTransaction()
-                    realm.close()
-                }
-
-                callback?.callbackCall(false, false)
+                callCallback(callback,false, false)
             }
 
             override fun onCancel() {
                 /* User cancelled the authentication */
 //                Log.d(TAG, "User cancelled login.")
 
-                // Remove info from Realm
-                val realm = Realm.getDefaultInstance()
-                realm.beginTransaction()
-                try {
-                    // Remove old object from Realm
-                    realm.delete(RealmAzureAD::class.java)
-                } finally {
-                    realm.commitTransaction()
-                    realm.close()
-                }
-
-                callback?.callbackCall(false, false)
+                callCallback(callback,false, false)
             }
         }
     }
 
     /**
-     * Callback used for interactive request.  If succeeds we use the access
-     * token to call the Microsoft Graph. Does not check cache
+     * Callback used for interactive request.  If succeeds we use the access token to call the Microsoft Graph.
+     * @param activity context
+     * @param callback callback to call when finished
+     * @return callback with result
      */
-    private fun getAuthInteractiveCallback(): AuthenticationCallback {
+    private fun getAuthInteractiveCallback(activity: FragmentActivity, callback: CallbackAzureAD): AuthenticationCallback {
         return object : AuthenticationCallback {
             override fun onSuccess(authenticationResult: AuthenticationResult) {
                 /* Successfully got a token, call graph now */
-//                Log.d(TAG, "Successfully authenticated")
-//                Log.d(TAG, "ID Token: " + authenticationResult.idToken)
-//                Log.d(TAG, "Expires On: " + authenticationResult.expiresOn)
-
-                // Save Token to Realm
-                val realm = Realm.getDefaultInstance()
-                realm.beginTransaction()
-                try {
-                    // Remove old object from Realm
-                    realm.delete(RealmAzureAD::class.java)
-
-                    // Create new object in Realm
-                    val realmAzureAD = RealmAzureAD()
-                    realmAzureAD.idToken = authenticationResult.idToken
-                    realm.copyToRealm(realmAzureAD)
-                } finally {
-                    realm.commitTransaction()
-                    realm.close()
-                }
+                Log.d(TAG, "Successfully authenticated")
+                Log.d(TAG, "ID Token: " + authenticationResult.idToken)
+                Log.d(TAG, "Expires On: " + authenticationResult.expiresOn)
 
                 /* Store the auth result */
                 authResult = authenticationResult
 
                 /* call Graph */
-                callGraphAPI()
-
-                /* update the UI to post call Graph state */
-                updateSuccessUI()
+                callGraphAPI(activity, callback)
             }
 
             override fun onError(exception: MsalException) {
@@ -237,66 +216,34 @@ class AzureAD(private var activity: FragmentActivity) {
                     /* Exception when communicating with the STS, likely config issue */
                 }
 
-                // Remove info from Realm
-                val realm = Realm.getDefaultInstance()
-                realm.beginTransaction()
-                try {
-                    // Remove old object from Realm
-                    realm.delete(RealmAzureAD::class.java)
-                } finally {
-                    realm.commitTransaction()
-                    realm.close()
-                }
-
-                callback?.callbackCall(false, false)
+                callCallback(callback,false, false)
             }
 
             override fun onCancel() {
                 /* User cancelled the authentication */
 //                Log.d(TAG, "User cancelled login.")
 
-                // Remove info from Realm
-                val realm = Realm.getDefaultInstance()
-                realm.beginTransaction()
-                try {
-                    // Remove old object from Realm
-                    realm.delete(RealmAzureAD::class.java)
-                } finally {
-                    realm.commitTransaction()
-                    realm.close()
-                }
-
-                callback?.callbackCall(false, false)
+                callCallback(callback,false, false)
             }
         }
     }
 
-    /** Set the UI for successful token acquisition data */
-    private fun updateSuccessUI() {
-//        callGraphButton.visibility = View.INVISIBLE
-//        signOutButton.visibility = View.VISIBLE
-//        findViewById(R.id.welcome).setVisibility(View.VISIBLE)
-//        (findViewById(R.id.welcome) as TextView).text = "Welcome, " + authResult.getUser().name
-//        findViewById(R.id.graphData).setVisibility(View.VISIBLE)
+    /**
+     * Handles the redirect from the System Browser
+     * @param requestCode request code of activity result
+     * @param resultCode result code of activity result
+     * @param data data of activity result
+     */
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        azureADApp?.handleInteractiveRequestRedirect(requestCode, resultCode, data)
     }
 
     /**
-     * Use MSAL to acquireToken for the end-user
-     * Callback will call Graph api w/ access token & update UI
+     * Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token
+     * @param activity context
+     * @param callback the callback to call when finished
      */
-    fun onCallGraphClicked() {
-        activity?.let {act ->
-            sampleApp?.acquireToken(act, SCOPES, getAuthInteractiveCallback())
-        }
-    }
-
-    /** Handles the redirect from the System Browser */
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        sampleApp?.handleInteractiveRequestRedirect(requestCode, resultCode, data)
-    }
-
-    /** Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
-    private fun callGraphAPI() {
+    private fun callGraphAPI(activity: FragmentActivity, callback: CallbackAzureAD) {
 //        Log.d(TAG, "Starting volley request to graph")
 
         /* Make sure we have a token to send to graph */
@@ -319,7 +266,7 @@ class AzureAD(private var activity: FragmentActivity) {
                 /* Successfully called graph, process data and send to UI */
 //                Log.d(TAG, "Response: " + response.toString())
 
-                updateGraphUI(response)
+                updateGraphUI(response, callback)
             }, Response.ErrorListener { error ->
 //                Log.d(TAG, "Error: " + error.toString())
             }) {
@@ -341,102 +288,40 @@ class AzureAD(private var activity: FragmentActivity) {
         queue.add(request)
     }
 
-    /** Sets the Graph response */
-    private fun updateGraphUI(graphResponse: JSONObject) {
+    /**
+     * Sets the Graph response, and call callback that user is signed in successfully.
+     * @param graphResponse the response from graph
+     * @param callback the callback to call when finished
+     */
+    private fun updateGraphUI(graphResponse: JSONObject, callback: CallbackAzureAD) {
 //        Log.d(TAG, "updateGraphUI: " + graphResponse.toString())
 
-        // Save data to realm
-        val realm = Realm.getDefaultInstance()
-        realm.beginTransaction()
-        try {
-            var realmAzureAD: RealmAzureAD? = realm.where(RealmAzureAD::class.java).findFirst()
-            realmAzureAD?.let { obj ->
-                obj.odatacontext = graphResponse.optString("@odata.context")
-                obj.id = graphResponse.optString("id")
-                obj.businessPhones = graphResponse.optString("businessPhones")
-                obj.displayName = graphResponse.optString("displayName")
-                obj.givenName = graphResponse.optString("givenName")
-                obj.jobTitle = graphResponse.optString("jobTitle")
-                obj.mail = graphResponse.optString("mail")
-                obj.mobilePhone = graphResponse.optString("mobilePhone")
-                obj.officeLocation = graphResponse.optString("officeLocation")
-                obj.preferredLanguage = graphResponse.optString("preferredLanguage")
-                obj.surname = graphResponse.optString("surname")
-                obj.userPrincipalName = graphResponse.optString("userPrincipalName")
-            }
-        } finally {
-            realm.commitTransaction()
-            realm.close()
-        }
+        // Save data to graph response
+        azureADGraphResponse = AzureADGraphResponse()
+        azureADGraphResponse?.odatacontext = graphResponse.optString("@odata.context")
+        azureADGraphResponse?.id = graphResponse.optString("id")
+        azureADGraphResponse?.businessPhones = graphResponse.optJSONArray("businessPhones")
+        azureADGraphResponse?.displayName = graphResponse.optString("displayName")
+        azureADGraphResponse?.givenName = graphResponse.optString("givenName")
+        azureADGraphResponse?.jobTitle = graphResponse.optString("jobTitle")
+        azureADGraphResponse?.mail = graphResponse.optString("mail")
+        azureADGraphResponse?.mobilePhone = graphResponse.optString("mobilePhone")
+        azureADGraphResponse?.officeLocation = graphResponse.optString("officeLocation")
+        azureADGraphResponse?.preferredLanguage = graphResponse.optString("preferredLanguage")
+        azureADGraphResponse?.surname = graphResponse.optString("surname")
+        azureADGraphResponse?.userPrincipalName = graphResponse.optString("userPrincipalName")
 
-        callback?.callbackCall(true, true)
-
-//        val graphText = findViewById(R.id.graphData) as TextView
-//        graphText.text = graphResponse.toString()
+        callCallback(callback,true, true)
     }
 
     /**
-     * Clears a user's tokens from the cache.
-     * Logically similar to "sign out" but only signs out of this app.
+     * Call calback with parameters
+     * @param callback callback to call
+     * @param success if is successful
+     * @param isSignedIn if is signed in
      */
-    fun onSignOutClicked() {
-
-        /* Attempt to get a user and remove their cookies from cache */
-        try {
-            // Remove info from Realm
-            val realm = Realm.getDefaultInstance()
-            realm.beginTransaction()
-            try {
-                // Remove old object from Realm
-                realm.delete(RealmAzureAD::class.java)
-            } finally {
-                realm.commitTransaction()
-                realm.close()
-            }
-
-            val users: List<User>? = sampleApp?.users
-
-            if (users == null) {
-                /* We have no users */
-
-            } else if (users.size == 1) {
-                /* We have 1 user */
-                /* Remove from token cache */
-                sampleApp?.remove(users[0])
-                updateSignedOutUI()
-
-            } else {
-                /* We have multiple users */
-                for (i in users.indices) {
-                    sampleApp?.remove(users[i])
-                }
-                updateSignedOutUI()
-            }
-
-            // BB 2018-10-23. Old 'getBaseContext()'.
-//            Toast.makeText(activity, "Signed Out!", Toast.LENGTH_SHORT).show()
-
-        } catch (e: MsalClientException) {
-//            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString())
-
-            callback?.callbackCall(false, true)
-
-        } catch (e: IndexOutOfBoundsException) {
-//            Log.d(TAG, "User at this position does not exist: " + e.toString())
-
-            callback?.callbackCall(false, true)
-        }
-
-    }
-
-    /** Set the UI for signed-out user */
-    private fun updateSignedOutUI() {
-        callback?.callbackCall(true, false)
-
-//        callGraphButton.visibility = View.VISIBLE
-//        signOutButton.visibility = View.INVISIBLE
-//        findViewById(R.id.welcome).setVisibility(View.INVISIBLE)
-//        findViewById(R.id.graphData).setVisibility(View.INVISIBLE)
-//        (findViewById(R.id.graphData) as TextView).text = "No Data"
+    private fun callCallback(callback: CallbackAzureAD, success: Boolean, isSignedIn: Boolean) {
+        Global.isSignedIn = isSignedIn
+        callback.callbackCall(success, isSignedIn)
     }
 }

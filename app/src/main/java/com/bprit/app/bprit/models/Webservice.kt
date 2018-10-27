@@ -1,11 +1,9 @@
 package com.bprit.app.bprit.models
 
 import android.util.Log
-import com.bprit.app.bprit.data.RealmAzureAD
 import com.bprit.app.bprit.data.WebserviceResult
 import com.bprit.app.bprit.interfaces.CallbackWebservice
 import com.bprit.app.bprit.interfaces.CallbackWebserviceResult
-import io.realm.Realm
 
 import org.json.JSONException
 import org.json.JSONObject
@@ -72,16 +70,17 @@ class Webservice {
                 connection.setRequestProperty("Content-Type", contentType)
 
                 // Set AzureAD token as authorization header
-                var idToken = ""
-                val realm = Realm.getDefaultInstance()
-                val realmAzureAD: RealmAzureAD? = realm.where(RealmAzureAD::class.java).findFirst()
-                realmAzureAD?.let { obj ->
-                    idToken = obj.idToken
-                }
-                realm.close()
-                if (idToken != "") {
-                    connection.setRequestProperty("Authorization", "Bearer $idToken")
-                }
+                connection.setRequestProperty("Authorization", "Bearer ${Global.azureAD?.getToken()}")
+//                var idToken = ""
+//                val realm = Realm.getDefaultInstance()
+//                val realmAzureAD: AzureADGraphResponse? = realm.where(AzureADGraphResponse::class.java).findFirst()
+//                realmAzureAD?.let { obj ->
+//                    idToken = obj.idToken
+//                }
+//                realm.close()
+//                if (idToken != "") {
+//                    connection.setRequestProperty("Authorization", "Bearer $idToken")
+//                }
 
                 connection.requestMethod = httpMethod
                 connection.connectTimeout = 120 * 1000

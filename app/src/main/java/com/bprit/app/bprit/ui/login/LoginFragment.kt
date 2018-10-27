@@ -10,14 +10,14 @@ import com.bprit.app.bprit.R
 import android.widget.*
 import com.bprit.app.bprit.MenuActivity
 import android.content.Intent
-import com.bprit.app.bprit.data.RealmAzureAD
+import com.bprit.app.bprit.data.AzureADGraphResponse
 import com.bprit.app.bprit.data.RealmComponentType
 import com.bprit.app.bprit.interfaces.CallbackAzureAD
 import com.bprit.app.bprit.models.ApplicationInformation
 import com.bprit.app.bprit.models.AzureAD
+import com.bprit.app.bprit.models.Global
 import com.bprit.app.bprit.models.LoadingAlertDialog
 import io.realm.Realm
-import java.util.*
 
 
 class LoginFragment : Fragment() {
@@ -79,8 +79,52 @@ class LoginFragment : Fragment() {
 //        }
 //    }
 
-    fun setAzureADOnActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        viewModel.azureAD?.onActivityResult(requestCode, resultCode, data)
+    //                // Example on calling Realm
+//                val realm = Realm.getDefaultInstance()
+//                realm.beginTransaction()
+//                try {
+//                    // Remove old object from Realm
+//                    realm.delete(AzureADGraphResponse::class.java)
+//
+//                    // Create new object in Realm
+//                    val realmAzureAD = AzureADGraphResponse()
+//                    realmAzureAD.idToken = authenticationResult.idToken
+//                    realm.copyToRealm(realmAzureAD)
+//                } finally {
+//                    realm.commitTransaction()
+//                    realm.close()
+//                }
+
+//    fun setAzureADOnActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        Global.azureAD?.onActivityResult(requestCode, resultCode, data)
+//    }
+
+    val azureADCallback: CallbackAzureAD = object : CallbackAzureAD {
+        override fun callbackCall(success: Boolean, isSignedIn: Boolean) {
+            if (success) {
+                if (isSignedIn) {
+                    signInOutButton?.text = getString(R.string.login_signOut)
+                    menuButton?.visibility = View.VISIBLE
+
+                    // Go to menu.
+                    activity?.let { fragmentActivity ->
+                        val intent = Intent(context, MenuActivity::class.java)
+                        startActivity(intent)
+                        fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                    }
+                } else {
+                    signInOutButton?.text = getString(R.string.login_signIn)
+                    menuButton?.visibility = View.GONE
+                }
+            } else {
+                signInOutButton?.text = getString(R.string.login_signIn)
+                menuButton?.visibility = View.GONE
+            }
+
+            activity?.let {act ->
+                viewModel.loadingAlertDialog?.setLoading(act, false, "")
+            }
+        }
     }
 
     override fun onResume() {
@@ -120,58 +164,59 @@ class LoginFragment : Fragment() {
             }
         }
 
-        // Init AzureAD
-        if (viewModel.azureAD == null) {
-            activity?.let { act ->
-                viewModel.azureAD = AzureAD(act)
-            }
-        }
-        activity?.let { act ->
-            viewModel.azureAD?.setActivity(act)
-        }
-        viewModel.azureAD?.setCallback(object : CallbackAzureAD {
-            override fun callbackCall(success: Boolean, isSignedIn: Boolean) {
-                if (success) {
-                    if (isSignedIn) {
-                        signInOutButton?.text = getString(R.string.login_signOut)
-                        menuButton?.visibility = View.VISIBLE
-                        viewModel.isSignedIn = true
-
-                        // Go to menu.
-                        activity?.let { fragmentActivity ->
-                            val intent = Intent(context, MenuActivity::class.java)
-                            startActivity(intent)
-                            fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-
-//                                    Log.d("DEBUG", "Test")
-
-//                                    val webservice = Webservice()
-//                                    webservice.testOrder(object : CallbackWebserviceResult {
-//                                        override fun callbackCall(result: WebserviceResult) {
-//                                            Log.d("DEBUG", "success: " + result.success.toString())
-//                                            Log.d("DEBUG", "error: " + result.error)
-//                                        }
-//                                    })
-                        }
-                    } else {
-                        signInOutButton?.text = getString(R.string.login_signIn)
-                        menuButton?.visibility = View.GONE
-                        viewModel.isSignedIn = false
-                    }
-                } else {
-                    signInOutButton?.text = getString(R.string.login_signIn)
-                    menuButton?.visibility = View.GONE
-                    viewModel.isSignedIn = false
-                }
-
-                activity?.let {act ->
-                    viewModel.loadingAlertDialog?.setLoading(act, false, "")
-                }
-            }
-        })
+//        // Init AzureAD
+//        if (Global.azureAD == null) {
+//            activity?.let { act ->
+//                Global.azureAD = AzureAD()
+//                Global.azureAD?.initialise(act)
+//            }
+//        }
+////        activity?.let { act ->
+////            Global.azureAD?.setActivity(act)
+////        }
+//        Global.azureAD?.setCallback(object : CallbackAzureAD {
+//            override fun callbackCall(success: Boolean, isSignedIn: Boolean) {
+//                if (success) {
+//                    if (isSignedIn) {
+//                        signInOutButton?.text = getString(R.string.login_signOut)
+//                        menuButton?.visibility = View.VISIBLE
+//                        Global.isSignedIn = true
+//
+//                        // Go to menu.
+//                        activity?.let { fragmentActivity ->
+//                            val intent = Intent(context, MenuActivity::class.java)
+//                            startActivity(intent)
+//                            fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+//
+////                                    Log.d("DEBUG", "Test")
+//
+////                                    val webservice = Webservice()
+////                                    webservice.testOrder(object : CallbackWebserviceResult {
+////                                        override fun callbackCall(result: WebserviceResult) {
+////                                            Log.d("DEBUG", "success: " + result.success.toString())
+////                                            Log.d("DEBUG", "error: " + result.error)
+////                                        }
+////                                    })
+//                        }
+//                    } else {
+//                        signInOutButton?.text = getString(R.string.login_signIn)
+//                        menuButton?.visibility = View.GONE
+//                        Global.isSignedIn = false
+//                    }
+//                } else {
+//                    signInOutButton?.text = getString(R.string.login_signIn)
+//                    menuButton?.visibility = View.GONE
+//                    Global.isSignedIn = false
+//                }
+//
+//                activity?.let {act ->
+//                    viewModel.loadingAlertDialog?.setLoading(act, false, "")
+//                }
+//            }
+//        })
 
         // Set signInOutButton text
-        if (viewModel.isSignedIn) {
+        if (Global.isSignedIn) {
             signInOutButton?.text = getString(R.string.login_signOut)
             menuButton?.visibility = View.VISIBLE
         } else {
@@ -180,16 +225,16 @@ class LoginFragment : Fragment() {
         }
 
         signInOutButton?.setOnClickListener {
-            if (!viewModel.isSignedIn) {
+            if (!Global.isSignedIn) {
                 activity?.let {act ->
                     viewModel.loadingAlertDialog?.setLoading(act, true, getString(R.string.dialog_loading_login))
+                    Global.azureAD?.signIn(act, azureADCallback) //onCallGraphClicked(act)
                 }
-                viewModel.azureAD?.onCallGraphClicked()
             } else {
                 activity?.let {act ->
                     viewModel.loadingAlertDialog?.setLoading(act, true, getString(R.string.dialog_loading_logout))
+                    Global.azureAD?.signOut(act, azureADCallback) //onSignOutClicked()
                 }
-                viewModel.azureAD?.onSignOutClicked()
             }
         }
 
@@ -213,7 +258,7 @@ class LoginFragment : Fragment() {
         val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
         try {
-            val realmComponentTypeRealmResults = realm.where(RealmAzureAD::class.java).findAll()
+            val realmComponentTypeRealmResults = realm.where(RealmComponentType::class.java).findAll()
             realmComponentTypeRealmResults?.let { results ->
                 if (results.size == 0) {
                     for (i in 1..10) {
