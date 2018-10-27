@@ -57,11 +57,13 @@ class DateTimeFunctions {
 
     /**
      * Make date beautiful
-     * @param date date formatted as 'yyyy-MM-dd'
+     * @param date date object
      * @return date formatted as 'dd.MM.yyyy'
      */
     fun beautifyDate(date: Date?): String? {
         var beautifulDate = ""
+
+        // TODO BB 2018-10-27. Test that this is working.
 
         date?.let {d ->
             try {

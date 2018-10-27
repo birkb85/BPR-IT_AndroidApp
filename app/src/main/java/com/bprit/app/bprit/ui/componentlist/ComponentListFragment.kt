@@ -29,8 +29,8 @@ class ComponentListFragment : Fragment() {
 
     var actionSyncMenuItem: MenuItem? = null
 
-    var linearLayoutManager: LinearLayoutManager? = null
-    var componentListRecyclerAdapter: ComponentListRecyclerAdapter? = null
+    private var linearLayoutManager: LinearLayoutManager? = null
+    private var componentListRecyclerAdapter: ComponentListRecyclerAdapter? = null
 
     private var componentTypeId: Int? = null
 
@@ -40,6 +40,9 @@ class ComponentListFragment : Fragment() {
 
     private lateinit var viewModel: ComponentListViewModel
 
+    /**
+     * Filter list when typing text in filter
+     */
     private var filterEditTextTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
 
@@ -54,12 +57,18 @@ class ComponentListFragment : Fragment() {
         }
     }
 
+    /**
+     * Filter the list
+     */
     private fun filterList() {
         filterEditText?.let { editText ->
             componentListRecyclerAdapter?.filterList(editText.text.toString())
         }
     }
 
+    /**
+     * Handles click on cell in list
+     */
     private var componentListRecyclerViewOnClickListener: ComponentListRecyclerViewOnClickListener =
         object : ComponentListRecyclerViewOnClickListener {
             override fun onClick(view: View, id: Int?) {

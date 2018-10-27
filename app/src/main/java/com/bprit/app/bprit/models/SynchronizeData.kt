@@ -45,6 +45,7 @@ class SynchronizeData {
 
     /**
      * Synchronize data
+     * @param callback callback called when finished synchronizing data
      */
     fun synchronizeData(callback: CallbackSynchronizeData) {
         var success = true

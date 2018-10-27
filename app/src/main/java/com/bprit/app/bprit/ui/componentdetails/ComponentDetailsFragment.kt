@@ -36,6 +36,9 @@ class ComponentDetailsFragment : Fragment() {
 
     private lateinit var viewModel: ComponentDetailsViewModel
 
+    /**
+     * Delete component
+     */
     private val deleteButtonOnClickListener = object : View.OnClickListener {
         override fun onClick(view: View?) {
             val realm = Realm.getDefaultInstance()
@@ -62,7 +65,7 @@ class ComponentDetailsFragment : Fragment() {
     /**
      * Show if data should synchronize
      */
-    fun showIfDataShouldSynchronize() {
+    private fun showIfDataShouldSynchronize() {
         val synchronizeData = SynchronizeData()
         actionSyncMenuItem?.isVisible = synchronizeData.shouldSynchronizeData()
     }
@@ -165,8 +168,5 @@ class ComponentDetailsFragment : Fragment() {
             }
         }
         realm.close()
-
-
     }
-
 }

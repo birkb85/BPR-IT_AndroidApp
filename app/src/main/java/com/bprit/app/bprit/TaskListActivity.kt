@@ -10,7 +10,6 @@ import com.bprit.app.bprit.interfaces.CallbackSynchronizeData
 import com.bprit.app.bprit.models.SynchronizeData
 import com.bprit.app.bprit.ui.tasklist.TaskListFragment
 
-
 class TaskListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

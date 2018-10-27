@@ -15,7 +15,7 @@ import com.bprit.app.bprit.data.AzureADGraphResponse
 // TODO BB 2018-10-25. App gets a token when logging in. This token should be renewed if it expires. Implement this.
 
 /**
- * Handling AzureAD communication
+ * Handles AzureAD communication
  * Example: https://docs.microsoft.com/en-us/azure/active-directory/develop/tutorial-v2-android
  * Heavily modified for our custom use
  */
@@ -140,8 +140,7 @@ class AzureAD {
     }
 
     /**
-     * Callback method for acquireTokenSilent calls
-     * Looks if tokens are in the cache (refreshes if necessary and if we don't forceRefresh else errors that we need to do an interactive request.
+     * Callback used for silent request. If succeeds we use the access token to call the Microsoft Graph.
      * @param activity context
      * @param callback callback to call when finished
      * @return callback with result
@@ -186,7 +185,7 @@ class AzureAD {
     }
 
     /**
-     * Callback used for interactive request.  If succeeds we use the access token to call the Microsoft Graph.
+     * Callback used for interactive request. If succeeds we use the access token to call the Microsoft Graph.
      * @param activity context
      * @param callback callback to call when finished
      * @return callback with result
@@ -315,7 +314,7 @@ class AzureAD {
     }
 
     /**
-     * Call calback with parameters
+     * Call callback with parameters, and set global variable isSignedIn
      * @param callback callback to call
      * @param success if is successful
      * @param isSignedIn if is signed in

@@ -26,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
 
         Global.azureAD?.onActivityResult(requestCode, resultCode, data)
 
+        // BB 2018-10-27. Example on how to get fragment.
 //        val fragment = supportFragmentManager.findFragmentById(R.id.container) as LoginFragment
 //        fragment.setAzureADOnActivityResult(requestCode, resultCode, data)
     }

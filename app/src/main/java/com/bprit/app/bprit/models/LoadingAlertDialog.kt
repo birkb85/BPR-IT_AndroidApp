@@ -9,13 +9,16 @@ import android.widget.TextView
 /**
  * Loading AlertDialog
  */
-class LoadingAlertDialog(private var activity: FragmentActivity) {
+class LoadingAlertDialog(activity: FragmentActivity) {
 
     var isLoading = false
     var loadingAlertDialog: AlertDialog? = null
     var loadingTextView: TextView? = null
     var loadingText = ""
 
+    /**
+     * Create loading alert dialog
+     */
     init {
         val alertDialogBuilder = AlertDialog.Builder(activity)
         val inflater = activity.layoutInflater

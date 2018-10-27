@@ -35,8 +35,8 @@ class ComponentTypeListFragment : Fragment() {
 
     var actionSyncMenuItem: MenuItem? = null
 
-    var linearLayoutManager: LinearLayoutManager? = null
-    var componentTypeListRecyclerAdapter: ComponentTypeListRecyclerAdapter? = null
+    private var linearLayoutManager: LinearLayoutManager? = null
+    private var componentTypeListRecyclerAdapter: ComponentTypeListRecyclerAdapter? = null
 
     companion object {
         fun newInstance() = ComponentTypeListFragment()
@@ -44,6 +44,9 @@ class ComponentTypeListFragment : Fragment() {
 
     private lateinit var viewModel: ComponentTypeListViewModel
 
+    /**
+     * Filter list when typing text in filter
+     */
     private var filterEditTextTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
 
@@ -58,12 +61,18 @@ class ComponentTypeListFragment : Fragment() {
         }
     }
 
+    /**
+     * Filter the list
+     */
     private fun filterList() {
         filterEditText?.let { editText ->
             componentTypeListRecyclerAdapter?.filterList(editText.text.toString())
         }
     }
 
+    /**
+     * Handles click on cell in list
+     */
     private var componentTypeListRecyclerViewOnClickListener: ComponentTypeListRecyclerViewOnClickListener =
         object : ComponentTypeListRecyclerViewOnClickListener {
             override fun onClick(view: View, id: Int?) {

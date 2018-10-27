@@ -56,7 +56,9 @@ class Global : Application() {
         Realm.setDefaultConfiguration(config)
     }
 
-    /** Controls migrations in release */
+    /**
+     *  Handles migrations in release version
+     */
     var realmMigration: RealmMigration = RealmMigration { realm, oldVersion, newVersion ->
         // More info at: https://realm.io/docs/java/latest/#migrations
         val schema = realm.schema
