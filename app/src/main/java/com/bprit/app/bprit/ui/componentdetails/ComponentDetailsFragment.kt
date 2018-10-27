@@ -4,15 +4,13 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import android.widget.TextView
 import com.bprit.app.bprit.R
 import com.bprit.app.bprit.data.RealmComponent
 import com.bprit.app.bprit.data.RealmComponentType
+import com.bprit.app.bprit.interfaces.CallbackSynchronizeData
 import com.bprit.app.bprit.models.DateTimeFunctions
 import com.bprit.app.bprit.models.Global
 import com.bprit.app.bprit.models.LoadingAlertDialog
@@ -27,6 +25,8 @@ class ComponentDetailsFragment : Fragment() {
     var typeTextView: TextView? = null
     var createdTextView: TextView? = null
     var modifiedTextView: TextView? = null
+
+    var actionSyncMenuItem: MenuItem? = null
 
     private var componentId: Int? = null
 
@@ -59,8 +59,18 @@ class ComponentDetailsFragment : Fragment() {
         }
     }
 
+    /**
+     * Show if data should synchronize
+     */
+    fun showIfDataShouldSynchronize() {
+        val synchronizeData = SynchronizeData()
+        actionSyncMenuItem?.isVisible = synchronizeData.shouldSynchronizeData()
+    }
+
     override fun onResume() {
         super.onResume()
+
+        showIfDataShouldSynchronize()
 
         // Restore loading
         viewModel.loadingAlertDialog?.onResume()
@@ -75,8 +85,7 @@ class ComponentDetailsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (activity == null) return
+        setHasOptionsMenu(true)
 
         // Receives data from intent
         val extras = activity?.intent?.extras
@@ -86,6 +95,29 @@ class ComponentDetailsFragment : Fragment() {
             activity?.finish()
             activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+
+        actionSyncMenuItem = menu?.findItem(R.id.action_sync)
+        showIfDataShouldSynchronize()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.action_sync -> {
+                val synchronizeData = SynchronizeData()
+                synchronizeData.synchronizeData(object : CallbackSynchronizeData {
+                    override fun callbackCall(success: Boolean) {
+                        item.isVisible = !success
+                    }
+                })
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onCreateView(

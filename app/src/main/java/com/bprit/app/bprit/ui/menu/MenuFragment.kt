@@ -33,6 +33,9 @@ class MenuFragment : Fragment() {
 
     private lateinit var viewModel: MenuViewModel
 
+    /**
+     * Show if data should synchronize
+     */
     fun showIfDataShouldSynchronize() {
         val synchronizeData = SynchronizeData()
         actionSyncMenuItem?.isVisible = synchronizeData.shouldSynchronizeData()
@@ -56,7 +59,7 @@ class MenuFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true) // TODO implement in other fragments!!!!!
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

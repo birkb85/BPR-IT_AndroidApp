@@ -38,27 +38,6 @@ class TaskListActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_task_list, menu)
-
-        val actionSync = menu.findItem(R.id.action_sync)
-        val synchronizeData = SynchronizeData()
-        actionSync.isVisible = synchronizeData.shouldSynchronizeData()
-
         return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
-            R.id.action_sync -> {
-                val synchronizeData = SynchronizeData()
-                synchronizeData.synchronizeData(object : CallbackSynchronizeData {
-                    override fun callbackCall(success: Boolean) {
-                        item.isVisible = !success
-                    }
-                })
-                return true
-            }
-        }
-
-        return super.onOptionsItemSelected(item)
     }
 }
