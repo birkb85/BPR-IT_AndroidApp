@@ -12,6 +12,8 @@ open class RealmComponentType(
     open var name: String? = null,
     open var created: Date? = null,
     open var modified: Date? = null,
-    open var inStorage: Int? = null
+    open var inStorage: Int? = null,
+    open var isDeleted: Boolean = false,
+    open var shouldSynchronize: Boolean = false
 ) : RealmObject() {
 }

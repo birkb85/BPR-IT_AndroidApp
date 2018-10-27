@@ -13,6 +13,7 @@ open class RealmComponent(
     open var created: Date? = null,
     open var modified: Date? = null,
     open var usedIn: Int? = null,
+    open var isDeleted: Boolean = false,
     open var shouldSynchronize: Boolean = false
 ) : RealmObject() {
 }

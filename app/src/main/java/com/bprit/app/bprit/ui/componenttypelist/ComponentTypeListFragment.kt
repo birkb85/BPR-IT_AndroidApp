@@ -24,6 +24,7 @@ import java.time.Duration
 import com.bprit.app.bprit.R.id.filterEditText
 import android.text.Editable
 import android.text.TextWatcher
+import com.bprit.app.bprit.models.LoadingAlertDialog
 
 
 class ComponentTypeListFragment : Fragment() {
@@ -72,6 +73,20 @@ class ComponentTypeListFragment : Fragment() {
             }
         }
 
+    override fun onResume() {
+        super.onResume()
+
+        // Restore loading
+        viewModel.loadingAlertDialog?.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // Close Loading Alert Dialog
+        viewModel.loadingAlertDialog?.onPause()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -89,6 +104,13 @@ class ComponentTypeListFragment : Fragment() {
         detailsButton = activity?.findViewById(R.id.detailsButton)
         swipeRefreshLayout = activity?.findViewById(R.id.swipeRefreshLayout)
         recyclerView = activity?.findViewById(R.id.recyclerView)
+
+        // Init loading dialog
+        if (viewModel.loadingAlertDialog == null) {
+            activity?.let { act ->
+                viewModel.loadingAlertDialog = LoadingAlertDialog(act)
+            }
+        }
 
         filterEditText?.addTextChangedListener(filterEditTextTextWatcher)
 

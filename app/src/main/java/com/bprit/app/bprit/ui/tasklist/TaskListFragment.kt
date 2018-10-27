@@ -13,6 +13,7 @@ import android.widget.EditText
 import com.bprit.app.bprit.R
 import android.support.v7.widget.RecyclerView
 import com.bprit.app.bprit.TaskDetailsActivity
+import com.bprit.app.bprit.models.LoadingAlertDialog
 
 class TaskListFragment : Fragment() {
 
@@ -26,6 +27,20 @@ class TaskListFragment : Fragment() {
     }
 
     private lateinit var viewModel: TaskListViewModel
+
+    override fun onResume() {
+        super.onResume()
+
+        // Restore loading
+        viewModel.loadingAlertDialog?.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // Close Loading Alert Dialog
+        viewModel.loadingAlertDialog?.onPause()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +59,13 @@ class TaskListFragment : Fragment() {
         detailsButton = activity?.findViewById(R.id.detailsButton)
         swipeRefreshLayout = activity?.findViewById(R.id.swipeRefreshLayout)
         recyclerView = activity?.findViewById(R.id.recyclerView)
+
+        // Init loading dialog
+        if (viewModel.loadingAlertDialog == null) {
+            activity?.let { act ->
+                viewModel.loadingAlertDialog = LoadingAlertDialog(act)
+            }
+        }
 
         detailsButton?.setOnClickListener {
             // TODO BB 2018-10-17. Temp go to task details.

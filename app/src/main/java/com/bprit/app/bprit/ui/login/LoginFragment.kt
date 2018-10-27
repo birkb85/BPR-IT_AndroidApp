@@ -28,15 +28,8 @@ class LoginFragment : Fragment() {
 
     private lateinit var viewModel: LoginViewModel
 
-    //    var nameTextView: TextView? = null
-//    var dataTextView: TextView? = null
     var signInOutButton: Button? = null
     var menuButton: Button? = null
-    //    var linearLayout: LinearLayout? = null
-//    var usernameEditText: EditText? = null
-//    var passwordEditText: EditText? = null
-//    var rememberCheckBox: CheckBox? = null
-//    var loginButton: Button? = null
     var versionTextView: TextView? = null
 
 //    fun showAlert() {
@@ -99,7 +92,10 @@ class LoginFragment : Fragment() {
 //        Global.azureAD?.onActivityResult(requestCode, resultCode, data)
 //    }
 
-    val azureADCallback: CallbackAzureAD = object : CallbackAzureAD {
+    /**
+     * Callback handling Azure AD result
+     */
+    private val azureADCallback: CallbackAzureAD = object : CallbackAzureAD {
         override fun callbackCall(success: Boolean, isSignedIn: Boolean) {
             if (success) {
                 if (isSignedIn) {
@@ -117,8 +113,13 @@ class LoginFragment : Fragment() {
                     menuButton?.visibility = View.GONE
                 }
             } else {
-                signInOutButton?.text = getString(R.string.login_signIn)
-                menuButton?.visibility = View.GONE
+                if (isSignedIn) {
+                    signInOutButton?.text = getString(R.string.login_signOut)
+                    menuButton?.visibility = View.VISIBLE
+                } else {
+                    signInOutButton?.text = getString(R.string.login_signIn)
+                    menuButton?.visibility = View.GONE
+                }
             }
 
             activity?.let {act ->
@@ -164,57 +165,6 @@ class LoginFragment : Fragment() {
             }
         }
 
-//        // Init AzureAD
-//        if (Global.azureAD == null) {
-//            activity?.let { act ->
-//                Global.azureAD = AzureAD()
-//                Global.azureAD?.initialise(act)
-//            }
-//        }
-////        activity?.let { act ->
-////            Global.azureAD?.setActivity(act)
-////        }
-//        Global.azureAD?.setCallback(object : CallbackAzureAD {
-//            override fun callbackCall(success: Boolean, isSignedIn: Boolean) {
-//                if (success) {
-//                    if (isSignedIn) {
-//                        signInOutButton?.text = getString(R.string.login_signOut)
-//                        menuButton?.visibility = View.VISIBLE
-//                        Global.isSignedIn = true
-//
-//                        // Go to menu.
-//                        activity?.let { fragmentActivity ->
-//                            val intent = Intent(context, MenuActivity::class.java)
-//                            startActivity(intent)
-//                            fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-//
-////                                    Log.d("DEBUG", "Test")
-//
-////                                    val webservice = Webservice()
-////                                    webservice.testOrder(object : CallbackWebserviceResult {
-////                                        override fun callbackCall(result: WebserviceResult) {
-////                                            Log.d("DEBUG", "success: " + result.success.toString())
-////                                            Log.d("DEBUG", "error: " + result.error)
-////                                        }
-////                                    })
-//                        }
-//                    } else {
-//                        signInOutButton?.text = getString(R.string.login_signIn)
-//                        menuButton?.visibility = View.GONE
-//                        Global.isSignedIn = false
-//                    }
-//                } else {
-//                    signInOutButton?.text = getString(R.string.login_signIn)
-//                    menuButton?.visibility = View.GONE
-//                    Global.isSignedIn = false
-//                }
-//
-//                activity?.let {act ->
-//                    viewModel.loadingAlertDialog?.setLoading(act, false, "")
-//                }
-//            }
-//        })
-
         // Set signInOutButton text
         if (Global.isSignedIn) {
             signInOutButton?.text = getString(R.string.login_signOut)
@@ -222,20 +172,6 @@ class LoginFragment : Fragment() {
         } else {
             signInOutButton?.text = getString(R.string.login_signIn)
             menuButton?.visibility = View.GONE
-        }
-
-        signInOutButton?.setOnClickListener {
-            if (!Global.isSignedIn) {
-                activity?.let {act ->
-                    viewModel.loadingAlertDialog?.setLoading(act, true, getString(R.string.dialog_loading_login))
-                    Global.azureAD?.signIn(act, azureADCallback) //onCallGraphClicked(act)
-                }
-            } else {
-                activity?.let {act ->
-                    viewModel.loadingAlertDialog?.setLoading(act, true, getString(R.string.dialog_loading_logout))
-                    Global.azureAD?.signOut(act, azureADCallback) //onSignOutClicked()
-                }
-            }
         }
 
         menuButton?.setOnClickListener {
@@ -247,6 +183,21 @@ class LoginFragment : Fragment() {
             }
         }
 
+        // Set signInOutButton OnClickListener
+        signInOutButton?.setOnClickListener {
+            if (!Global.isSignedIn) {
+                activity?.let {act ->
+                    viewModel.loadingAlertDialog?.setLoading(act, true, getString(R.string.dialog_loading_login))
+                    Global.azureAD?.signIn(act, azureADCallback)
+                }
+            } else {
+                activity?.let {act ->
+                    viewModel.loadingAlertDialog?.setLoading(act, true, getString(R.string.dialog_loading_logout))
+                    Global.azureAD?.signOut(act, azureADCallback)
+                }
+            }
+        }
+
         // Show version
         context?.let { context ->
             val applicationInformation = ApplicationInformation()
@@ -254,26 +205,26 @@ class LoginFragment : Fragment() {
             versionTextView?.text = version
         }
 
-        // TODO BB 2018-10-26. Remove at release. Test create componenttypes.
-        val realm = Realm.getDefaultInstance()
-        realm.beginTransaction()
-        try {
-            val realmComponentTypeRealmResults = realm.where(RealmComponentType::class.java).findAll()
-            realmComponentTypeRealmResults?.let { results ->
-                if (results.size == 0) {
-                    for (i in 1..10) {
-                        // Create new objects in Realm
-                        val realmComponentType = RealmComponentType()
-                        realmComponentType.id = i
-                        realmComponentType.name = "Test $i"
-                        realmComponentType.inStorage = 10
-                        realm.copyToRealm(realmComponentType)
-                    }
-                }
-            }
-        } finally {
-            realm.commitTransaction()
-            realm.close()
-        }
+//        // BB 2018-10-26. Remove at release. Test create componenttypes.
+//        val realm = Realm.getDefaultInstance()
+//        realm.beginTransaction()
+//        try {
+//            val realmComponentTypeRealmResults = realm.where(RealmComponentType::class.java).findAll()
+//            realmComponentTypeRealmResults?.let { results ->
+//                if (results.size == 0) {
+//                    for (i in 1..10) {
+//                        // Create new objects in Realm
+//                        val realmComponentType = RealmComponentType()
+//                        realmComponentType.id = i
+//                        realmComponentType.name = "Test $i"
+//                        realmComponentType.inStorage = 10
+//                        realm.copyToRealm(realmComponentType)
+//                    }
+//                }
+//            }
+//        } finally {
+//            realm.commitTransaction()
+//            realm.close()
+//        }
     }
 }

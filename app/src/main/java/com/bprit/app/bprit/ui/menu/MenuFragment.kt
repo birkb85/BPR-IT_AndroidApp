@@ -16,6 +16,7 @@ import com.bprit.app.bprit.data.WebserviceResult
 import com.bprit.app.bprit.interfaces.CallbackWebserviceResult
 import com.bprit.app.bprit.models.DateTimeFunctions
 import com.bprit.app.bprit.models.Global
+import com.bprit.app.bprit.models.LoadingAlertDialog
 import com.bprit.app.bprit.models.Webservice
 
 class MenuFragment : Fragment() {
@@ -31,6 +32,20 @@ class MenuFragment : Fragment() {
     }
 
     private lateinit var viewModel: MenuViewModel
+
+    override fun onResume() {
+        super.onResume()
+
+        // Restore loading
+        viewModel.loadingAlertDialog?.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // Close Loading Alert Dialog
+        viewModel.loadingAlertDialog?.onPause()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,6 +65,13 @@ class MenuFragment : Fragment() {
         tasksLinearLayout = activity?.findViewById(R.id.tasksLinearLayout)
         tasksDividerView = activity?.findViewById(R.id.tasksDividerView)
         componentsLinearLayout = activity?.findViewById(R.id.componentsLinearLayout)
+
+        // Init loading dialog
+        if (viewModel.loadingAlertDialog == null) {
+            activity?.let { act ->
+                viewModel.loadingAlertDialog = LoadingAlertDialog(act)
+            }
+        }
 
         // Set name
         Global.azureAD?.getDisplayName()?.let {name ->

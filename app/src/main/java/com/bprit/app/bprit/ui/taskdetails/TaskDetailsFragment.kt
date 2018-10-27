@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bprit.app.bprit.R
+import com.bprit.app.bprit.models.LoadingAlertDialog
 
 class TaskDetailsFragment : Fragment() {
 
@@ -15,6 +16,20 @@ class TaskDetailsFragment : Fragment() {
     }
 
     private lateinit var viewModel: TaskDetailsViewModel
+
+    override fun onResume() {
+        super.onResume()
+
+        // Restore loading
+        viewModel.loadingAlertDialog?.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // Close Loading Alert Dialog
+        viewModel.loadingAlertDialog?.onPause()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,6 +42,13 @@ class TaskDetailsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(TaskDetailsViewModel::class.java)
         // Use the ViewModel
+
+        // Init loading dialog
+        if (viewModel.loadingAlertDialog == null) {
+            activity?.let { act ->
+                viewModel.loadingAlertDialog = LoadingAlertDialog(act)
+            }
+        }
     }
 
 }
