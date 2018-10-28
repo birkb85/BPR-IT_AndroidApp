@@ -107,6 +107,8 @@ class ComponentListFragment : Fragment() {
                         getString(R.string.dialog_loading_getComponents)
                     )
 
+                    // TODO Synchronize before getting list
+
                     componentTypeId?.let { typeId ->
                         val webservice = Webservice()
                         webservice.getComponentsForType(typeId, object : CallbackWebserviceResult {

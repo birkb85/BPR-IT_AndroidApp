@@ -113,6 +113,8 @@ class ComponentTypeListFragment : Fragment() {
                         getString(R.string.dialog_loading_getComponentTypes)
                     )
 
+                    // TODO Synchronize before getting list
+
                     val webservice = Webservice()
                     webservice.getComponentTypes(object : CallbackWebserviceResult {
                         override fun callbackCall(result: WebserviceResult) {
