@@ -97,6 +97,10 @@
         <item name="android:paddingBottom">@dimen/cell_margin</item>
     </style>
 
+    <style name="textNormalError" parent="textNormal">
+        <item name="android:textColor">@color/colorError</item>
+    </style>
+
     <style name="textCell">
         <item name="android:textColor">@color/colorPrimary_text</item>
         <item name="android:textSize">@dimen/normal</item>

@@ -13,8 +13,6 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Annuller</string>
     <string name="dialog_save">Gem</string>
-    <string name="dialog_yes">Ja</string>
-    <string name="dialog_no">Nej</string>
     <string name="dialog_error">Fejl:</string>
     <string name="dialog_error304">Din oprettelse / opdatering blev ikke udført, prøv igen senere ellers kontakt support</string>
     <string name="dialog_error400">Der mangler informationer til at kunne udføre forespørgsel, kontakt support</string>
@@ -29,6 +27,9 @@
     <string name="dialog_loading_pleaseWait">Vent venligst&#8230;</string>
     <string name="dialog_loading_login">Logger ind</string>
     <string name="dialog_loading_logout">Logger ud</string>
+    <string name="dialog_loading_getComponentTypes">Henter komponenttyper</string>
+    <string name="dialog_loading_getComponents">Henter komponenter</string>
+    <string name="dialog_loading_synchronizeData">Synkroniserer data</string>
 
     <!-- Login -->
     <string name="login_title">BPR-IT - Login</string>
@@ -38,6 +39,7 @@
     <string name="login_signInOffline">Log ind - offline</string>
     <string name="login_menu">Gå til menu</string>
     <string name="login_version">version:</string>
+    <string name="login_notConnectedToInternet">Tilslut enheden til internettet for at logge ind</string>
 
     <!-- Menu -->
     <string name="menu_title">BPR-IT - Menu</string>
@@ -56,11 +58,13 @@
     <string name="componentTypeList_filter">Søg</string>
     <string name="componentTypeList_name">Type:</string>
     <string name="componentTypeList_inStorage">Antal:</string>
+    <string name="componentTypeList_notConnectedToInternet">Tilslut enhed til internettet for at opdatere liste</string>
 
     <!-- Component List -->
     <string name="componentList_title">BPR-IT - Komponenter</string>
     <string name="componentList_filter">Søg</string>
     <string name="componentList_serial">Serienummer:</string>
+    <string name="componentList_notConnectedToInternet">Tilslut enhed til internettet for at opdatere liste</string>
 
     <!-- Component Details -->
     <string name="componentDetails_title">BPR-IT - Komponentdetaljer</string>
@@ -69,5 +73,6 @@
     <string name="componentDetails_type">Type:</string>
     <string name="componentDetails_created">Oprettet d.:</string>
     <string name="componentDetails_modified">Sidst ændret d.:</string>
+    <string name="componentDetails_componentWillBeRemoved">Komponent vil blive slettet</string>
 
 </resources>

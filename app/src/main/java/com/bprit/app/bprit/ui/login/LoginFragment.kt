@@ -123,7 +123,7 @@ class LoginFragment : Fragment() {
                 }
             }
 
-            activity?.let {act ->
+            activity?.let { act ->
                 viewModel.loadingAlertDialog?.setLoading(act, false, "")
             }
         }
@@ -187,12 +187,17 @@ class LoginFragment : Fragment() {
         // Set signInOutButton OnClickListener
         signInOutButton?.setOnClickListener {
             if (!Global.isSignedIn) {
-                activity?.let {act ->
-                    viewModel.loadingAlertDialog?.setLoading(act, true, getString(R.string.dialog_loading_login))
-                    Global.azureAD?.signIn(act, azureADCallback)
+                activity?.let { act ->
+                    val global = Global()
+                    if (global.isConnectedToInternet(act)) {
+                        viewModel.loadingAlertDialog?.setLoading(act, true, getString(R.string.dialog_loading_login))
+                        Global.azureAD?.signIn(act, azureADCallback)
+                    } else {
+                        global.getMessageAlertDialog(act, getString(R.string.login_notConnectedToInternet), null).show()
+                    }
                 }
             } else {
-                activity?.let {act ->
+                activity?.let { act ->
                     viewModel.loadingAlertDialog?.setLoading(act, true, getString(R.string.dialog_loading_logout))
                     Global.azureAD?.signOut(act, azureADCallback)
                 }
@@ -206,55 +211,55 @@ class LoginFragment : Fragment() {
             versionTextView?.text = version
         }
 
-        // BB 2018-10-26. Remove at release. Test create componenttypes.
-        val realm = Realm.getDefaultInstance()
-        realm.beginTransaction()
-        try {
-            val realmComponentTypeRealmResults = realm.where(RealmComponentType::class.java).findAll()
-            realmComponentTypeRealmResults?.let { results ->
-                if (results.size == 0) {
-                    for (i in 1..10) {
-                        // Create new objects in Realm
-                        val realmComponentType = RealmComponentType()
-                        realmComponentType.id = i
-                        realmComponentType.name = "Test $i"
-                        realmComponentType.inStorage = 10
-//                        if (i == 9) {
-//                            realmComponentType.isDeleted = true
-//                            realmComponentType.shouldSynchronize = true
+//        // BB 2018-10-26. Remove at release. Test create componenttypes.
+//        val realm = Realm.getDefaultInstance()
+//        realm.beginTransaction()
+//        try {
+//            val realmComponentTypeRealmResults = realm.where(RealmComponentType::class.java).findAll()
+//            realmComponentTypeRealmResults?.let { results ->
+//                if (results.size == 0) {
+//                    for (i in 1..10) {
+//                        // Create new objects in Realm
+//                        val realmComponentType = RealmComponentType()
+//                        realmComponentType.id = i
+//                        realmComponentType.name = "Test $i"
+//                        realmComponentType.inStorage = 10
+////                        if (i == 9) {
+////                            realmComponentType.isDeleted = true
+////                            realmComponentType.shouldSynchronize = true
+////                        }
+//                        realm.copyToRealm(realmComponentType)
+//                    }
+//                }
+//            }
+//
+//            val realmComponentRealmResults = realm.where(RealmComponent::class.java).findAll()
+//            realmComponentRealmResults?.let { results ->
+//                if (results.size == 0) {
+//                    for (i in 1..10) {
+//                        val realmComponentType = realm.where(RealmComponentType::class.java).equalTo("id", 1 as Int).findFirst()
+//                        if (realmComponentType == null) {
+//                            val realmComponentTypeNew = RealmComponentType()
+//                            realmComponentTypeNew.id = 1
+//                            realmComponentTypeNew.name = "Test 1"
+//                            realmComponentTypeNew.inStorage = 10
+//                            realm.copyToRealm(realmComponentTypeNew)
 //                        }
-                        realm.copyToRealm(realmComponentType)
-                    }
-                }
-            }
-
-            val realmComponentRealmResults = realm.where(RealmComponent::class.java).findAll()
-            realmComponentRealmResults?.let { results ->
-                if (results.size == 0) {
-                    for (i in 1..10) {
-                        val realmComponentType = realm.where(RealmComponentType::class.java).equalTo("id", 1 as Int).findFirst()
-                        if (realmComponentType == null) {
-                            val realmComponentTypeNew = RealmComponentType()
-                            realmComponentTypeNew.id = 1
-                            realmComponentTypeNew.name = "Test 1"
-                            realmComponentTypeNew.inStorage = 10
-                            realm.copyToRealm(realmComponentTypeNew)
-                        }
-
-                        val realmComponent = RealmComponent()
-                        realmComponent.id = i.toString()
-                        realmComponent.typeId = 1
-                        if (i == 9) {
-                            realmComponent.isDeleted = true
-                            realmComponent.shouldSynchronize = true
-                        }
-                        realm.copyToRealm(realmComponent)
-                    }
-                }
-            }
-        } finally {
-            realm.commitTransaction()
-            realm.close()
-        }
+//
+//                        val realmComponent = RealmComponent()
+//                        realmComponent.id = i.toString()
+//                        realmComponent.typeId = 1
+//                        if (i == 9) {
+//                            realmComponent.isDeleted = true
+//                            realmComponent.shouldSynchronize = true
+//                        }
+//                        realm.copyToRealm(realmComponent)
+//                    }
+//                }
+//            }
+//        } finally {
+//            realm.commitTransaction()
+//            realm.close()
+//        }
     }
 }

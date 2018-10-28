@@ -2,6 +2,7 @@ package com.bprit.app.bprit.ui.componenttypelist
 
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
@@ -14,22 +15,25 @@ import com.bprit.app.bprit.R
 import com.bprit.app.bprit.R.id.recyclerView
 import io.realm.Sort
 import android.support.v7.widget.LinearLayoutManager
+import android.telephony.gsm.GsmCellLocation
 import android.widget.Toast
 import com.bprit.app.bprit.interfaces.ComponentTypeListRecyclerViewOnClickListener
-import com.bprit.app.bprit.models.ComponentTypeListRecyclerAdapter
 import java.time.Duration
 import com.bprit.app.bprit.R.id.filterEditText
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
+import android.widget.TextView
+import com.bprit.app.bprit.data.WebserviceResult
 import com.bprit.app.bprit.interfaces.CallbackSynchronizeData
-import com.bprit.app.bprit.models.LoadingAlertDialog
-import com.bprit.app.bprit.models.SynchronizeData
+import com.bprit.app.bprit.interfaces.CallbackWebserviceResult
+import com.bprit.app.bprit.models.*
 
 
 class ComponentTypeListFragment : Fragment() {
 
     var filterEditText: EditText? = null
+    var notConnectedToInternetTextView: TextView? = null
     var swipeRefreshLayout: SwipeRefreshLayout? = null
     var recyclerView: RecyclerView? = null
 
@@ -98,6 +102,41 @@ class ComponentTypeListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
+        // Try to update list if not updated yet
+        if (!viewModel.listUpdated) {
+            activity?.let { act ->
+                val global = Global()
+                if (global.isConnectedToInternet(act)) {
+                    viewModel.loadingAlertDialog?.setLoading(
+                        act,
+                        true,
+                        getString(R.string.dialog_loading_getComponentTypes)
+                    )
+
+                    val webservice = Webservice()
+                    webservice.getComponentTypes(object : CallbackWebserviceResult {
+                        override fun callbackCall(result: WebserviceResult) {
+                            activity?.let { act ->
+                                act.runOnUiThread {
+                                    if (result.success) {
+                                        notConnectedToInternetTextView?.visibility = View.GONE
+                                        viewModel.listUpdated = true
+                                        filterList()
+                                    } else {
+                                        global.getErrorAlertDialog(act, result.error, null).show()
+                                    }
+
+                                    viewModel.loadingAlertDialog?.setLoading(act, false, "")
+                                }
+                            }
+                        }
+                    })
+                } else {
+                    notConnectedToInternetTextView?.visibility = View.VISIBLE
+                }
+            }
+        }
+
         showIfDataShouldSynchronize()
 
         filterList()
@@ -155,6 +194,7 @@ class ComponentTypeListFragment : Fragment() {
 
         // Set views
         filterEditText = activity?.findViewById(R.id.filterEditText)
+        notConnectedToInternetTextView = activity?.findViewById(R.id.notConnectedToInternetTextView)
         swipeRefreshLayout = activity?.findViewById(R.id.swipeRefreshLayout)
         recyclerView = activity?.findViewById(R.id.recyclerView)
 
@@ -166,6 +206,9 @@ class ComponentTypeListFragment : Fragment() {
         }
 
         filterEditText?.addTextChangedListener(filterEditTextTextWatcher)
+
+        // Hide not connected to internet message on create
+        notConnectedToInternetTextView?.visibility = View.GONE
 
         // Recycler view
         recyclerView?.setHasFixedSize(false)

@@ -11,6 +11,13 @@ import android.support.v7.app.AlertDialog
 import android.widget.Button
 import com.bprit.app.bprit.R
 import com.bprit.app.bprit.interfaces.AlertDialogButtonOnClickListener
+import android.net.NetworkInfo
+import android.net.ConnectivityManager
+import android.util.Log
+import java.lang.Exception
+import android.R.attr.onClick
+import android.view.LayoutInflater
+import android.view.View
 
 
 /**
@@ -89,13 +96,62 @@ class Global : Application() {
     }
 
     /**
-     * Default dialog showing an error
+     * User friendly message for error
      * @param context context of activity
-     * @param message message to display in alert dialog
+     * @param error http status code / error message
+     * @return friendly message
+     */
+    private fun errorMessage(
+        context: Context,
+        error: String
+    ): String {
+        var message = ""
+
+        if (error.contains("No address associated with hostname", true)) {
+            message = context.getString(R.string.dialog_errorNoAddressAssociatedWithHostName)
+        }
+
+        if (message == "") {
+            when (error) {
+                "" -> message = "" // OK
+                "304" -> message = "$error ${context.getString(R.string.dialog_error304)}"
+                "400" -> message = "$error ${context.getString(R.string.dialog_error400)}"
+                "401" -> message = "$error ${context.getString(R.string.dialog_error401)}"
+                "404" -> message = "$error ${context.getString(R.string.dialog_error404)}"
+                "500" -> message = "$error ${context.getString(R.string.dialog_error500)}"
+                "503" -> message = "$error ${context.getString(R.string.dialog_error503)}"
+                else -> message = context.getString(R.string.dialog_errorDefault)
+            }
+        }
+
+        message = ("${context.getString(R.string.dialog_error)} $message").trim()
+
+        return message
+    }
+
+    /**
+     * Default dialog showing an error, is using friendly errors for error codes
+     * @param context context of activity
+     * @param error error code / text to display in alert dialog
      * @param onClickListener callback when clicking on button
      * @return alert dialog
      */
     fun getErrorAlertDialog(
+        context: Context,
+        error: String,
+        onClickListener: AlertDialogButtonOnClickListener?
+    ): AlertDialog {
+        return getMessageAlertDialog(context, errorMessage(context, error), onClickListener)
+    }
+
+    /**
+     * Default dialog showing an message
+     * @param context context of activity
+     * @param message message to display
+     * @param onClickListener callback when clicking on button
+     * @return alert dialog
+     */
+    fun getMessageAlertDialog(
         context: Context,
         message: String,
         onClickListener: AlertDialogButtonOnClickListener?
@@ -123,36 +179,55 @@ class Global : Application() {
     }
 
     /**
-     * User friendly message for error
+     * Default dialog showing an message, asking for confirmation
      * @param context context of activity
-     * @param value http status code / error message
-     * @return friendly message
+     * @param message message to display
+     * @param okOnClickListener callback when confirming action
+     * @param cancelOnClickListener callback when canceling action
+     * @return alert dialog
      */
-    fun errorMessage(
+    fun getConfirmAlertDialog(
         context: Context,
-        value: String
-    ): String {
-        var message = ""
+        message: String,
+        okOnClickListener: AlertDialogButtonOnClickListener?,
+        cancelOnClickListener: AlertDialogButtonOnClickListener?
+    ): AlertDialog {
+        val alertDialogBuilder = AlertDialog.Builder(context)
 
-        if (value.contains("No address associated with hostname", true)) {
-            message = context.getString(R.string.dialog_errorNoAddressAssociatedWithHostName)
+        val inflater = (context as Activity).layoutInflater
+        val inflaterView = inflater.inflate(R.layout.dialog_confirm, null)
+        alertDialogBuilder.setView(inflaterView)
+        alertDialogBuilder.setCancelable(false)
+
+        val alertDialog = alertDialogBuilder.create()
+
+        val textView = inflaterView.findViewById(R.id.textView) as TextView?
+        val cancelButton = inflaterView.findViewById(R.id.cancelButton) as Button?
+        val okButton = inflaterView.findViewById(R.id.okButton) as Button?
+
+        textView?.text = message
+
+        cancelButton?.setOnClickListener {
+            alertDialog.dismiss()
+            cancelOnClickListener?.onClick()
         }
 
-        if (message == "") {
-            when (value) {
-                "" -> message = "" // OK
-                "304" -> message = "$value ${context.getString(R.string.dialog_error304)}"
-                "400" -> message = "$value ${context.getString(R.string.dialog_error400)}"
-                "401" -> message = "$value ${context.getString(R.string.dialog_error401)}"
-                "404" -> message = "$value ${context.getString(R.string.dialog_error404)}"
-                "500" -> message = "$value ${context.getString(R.string.dialog_error500)}"
-                "503" -> message = "$value ${context.getString(R.string.dialog_error503)}"
-                else -> message = context.getString(R.string.dialog_errorDefault)
-            }
+        okButton?.setOnClickListener {
+            alertDialog.dismiss()
+            okOnClickListener?.onClick()
         }
 
-        message = ("${context.getString(R.string.dialog_error)} $message").trim()
+        return alertDialog
+    }
 
-        return message
+    /**
+     * Check if unit is connected to the internet
+     * @param context context of activity
+     * @return unit is connected to the internet
+     */
+    fun isConnectedToInternet(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 }

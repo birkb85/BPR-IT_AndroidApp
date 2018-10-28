@@ -50,7 +50,6 @@ class SynchronizeData {
     fun synchronizeData(callback: CallbackSynchronizeData) {
         var success = true
 
-        // Example on calling Realm
         val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
         try {

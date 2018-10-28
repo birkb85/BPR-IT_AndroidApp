@@ -1,5 +1,6 @@
 package com.bprit.app.bprit.models
 
+import java.lang.Exception
 import java.util.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -78,5 +79,25 @@ class DateTimeFunctions {
         }
 
         return beautifulDate
+    }
+
+    /**
+     * Get date from string
+     * @param date date string formatted as 'yyyy-MM-dd'
+     * @return date date object
+     */
+    fun getDateFromString(date: String) : Date? {
+        var d: Date? = null
+
+        try {
+            val calendar = getLocalizedCalendar()
+            val simpleDateFormatBefore = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+            simpleDateFormatBefore.calendar = calendar
+            d = simpleDateFormatBefore.parse(date)
+        } catch (e: Exception) {
+
+        }
+
+        return d
     }
 }

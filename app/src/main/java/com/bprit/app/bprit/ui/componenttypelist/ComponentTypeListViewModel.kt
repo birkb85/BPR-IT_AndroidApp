@@ -6,5 +6,7 @@ import com.bprit.app.bprit.models.LoadingAlertDialog
 class ComponentTypeListViewModel : ViewModel() {
     // Implement the ViewModel
 
+    var listUpdated = false
+
     var loadingAlertDialog: LoadingAlertDialog? = null
 }

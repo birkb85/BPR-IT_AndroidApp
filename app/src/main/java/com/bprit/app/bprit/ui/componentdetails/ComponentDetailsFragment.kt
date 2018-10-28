@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.bprit.app.bprit.R
 import com.bprit.app.bprit.data.RealmComponent
 import com.bprit.app.bprit.data.RealmComponentType
+import com.bprit.app.bprit.interfaces.AlertDialogButtonOnClickListener
 import com.bprit.app.bprit.interfaces.CallbackSynchronizeData
 import com.bprit.app.bprit.models.DateTimeFunctions
 import com.bprit.app.bprit.models.Global
@@ -29,6 +30,7 @@ class ComponentDetailsFragment : Fragment() {
     var actionSyncMenuItem: MenuItem? = null
 
     private var componentId: Int? = null
+    private var componentTypeId: Int? = null // TODO Get this from previous activity
 
     companion object {
         fun newInstance() = ComponentDetailsFragment()
@@ -40,24 +42,40 @@ class ComponentDetailsFragment : Fragment() {
      * Delete component
      */
     private val deleteButtonOnClickListener = object : View.OnClickListener {
-        override fun onClick(view: View?) {
-            val realm = Realm.getDefaultInstance()
-            realm.beginTransaction()
-            try {
-                val realmComponent = realm?.where(RealmComponent::class.java)?.equalTo("id", componentId.toString())?.findFirst()
-                realmComponent?.let { component ->
-                    component.isDeleted = true
-                    component.shouldSynchronize = true
-                }
-            } finally {
-                realm.commitTransaction()
-                realm.close()
-            }
+        override fun onClick(p0: View?) {
+            activity?.let { act ->
+                val global = Global()
+                global.getConfirmAlertDialog(
+                    act,
+                    getString(R.string.componentDetails_componentWillBeRemoved),
+                    object : AlertDialogButtonOnClickListener {
+                        override fun onClick() {
+                            val realm = Realm.getDefaultInstance()
+                            realm.beginTransaction()
+                            try {
+                                val realmComponent = realm?.where(RealmComponent::class.java)
+                                    ?.equalTo("id", componentId.toString())
+                                    ?.equalTo("typeId", componentTypeId)?.findFirst()
+                                realmComponent?.let { component ->
+                                    component.isDeleted = true
+                                    component.shouldSynchronize = true
+                                }
+                            } finally {
+                                realm.commitTransaction()
+                                realm.close()
+                            }
 
-            val synchronizeData = SynchronizeData()
-            if (synchronizeData.shouldSynchronizeData()) {
-                activity?.finish()
-                activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                            showIfDataShouldSynchronize()
+
+//                        val synchronizeData = SynchronizeData()
+//                        if (synchronizeData.shouldSynchronizeData()) {
+//                            activity?.finish()
+//                            activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+//                        }
+                        }
+                    },
+                    null
+                ).show()
             }
         }
     }
@@ -94,6 +112,7 @@ class ComponentDetailsFragment : Fragment() {
         val extras = activity?.intent?.extras
         if (extras != null) {
             if (extras.containsKey("componentId")) componentId = extras.getInt("componentId")
+            if (extras.containsKey("componentTypeId")) componentTypeId = extras.getInt("componentTypeId")
         } else {
             activity?.finish()
             activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
@@ -155,10 +174,15 @@ class ComponentDetailsFragment : Fragment() {
 
         // Set details
         val realm = Realm.getDefaultInstance()
-        val realmComponent = realm.where(RealmComponent::class.java).equalTo("id", componentId.toString()).findFirst()
-        realmComponent?.let {component ->
-            val realmComponentType = realm.where(RealmComponentType::class.java).equalTo("id", component.typeId).findFirst()
-            realmComponentType?.let {componentType ->
+        val realmComponent = realm?.where(RealmComponent::class.java)
+            ?.equalTo("id", componentId.toString())
+            ?.equalTo("typeId", componentTypeId)?.findFirst()
+
+        val realmComponentType = realm?.where(RealmComponentType::class.java)
+            ?.equalTo("id", componentTypeId)?.findFirst()
+
+        realmComponent?.let { component ->
+            realmComponentType?.let { componentType ->
                 val dateTimeFunctions = DateTimeFunctions()
                 serialHeadingTextView?.text = component.id.toString()
                 serialTextView?.text = component.id.toString()

@@ -12,18 +12,19 @@ import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
+import android.widget.TextView
 import com.bprit.app.bprit.ComponentDetailsActivity
+import com.bprit.app.bprit.data.WebserviceResult
 import com.bprit.app.bprit.interfaces.CallbackSynchronizeData
+import com.bprit.app.bprit.interfaces.CallbackWebserviceResult
 import com.bprit.app.bprit.interfaces.ComponentListRecyclerViewOnClickListener
 import com.bprit.app.bprit.interfaces.ComponentTypeListRecyclerViewOnClickListener
-import com.bprit.app.bprit.models.ComponentListRecyclerAdapter
-import com.bprit.app.bprit.models.ComponentTypeListRecyclerAdapter
-import com.bprit.app.bprit.models.LoadingAlertDialog
-import com.bprit.app.bprit.models.SynchronizeData
+import com.bprit.app.bprit.models.*
 
 class ComponentListFragment : Fragment() {
 
     var filterEditText: EditText? = null
+    var notConnectedToInternetTextView: TextView? = null
     var swipeRefreshLayout: SwipeRefreshLayout? = null
     var recyclerView: RecyclerView? = null
 
@@ -77,6 +78,7 @@ class ComponentListFragment : Fragment() {
                 activity?.let { fragmentActivity ->
                     val intent = Intent(context, ComponentDetailsActivity::class.java)
                     intent.putExtra("componentId", id)
+                    intent.putExtra("componentTypeId", componentTypeId)
                     startActivity(intent)
                     fragmentActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                 }
@@ -93,6 +95,43 @@ class ComponentListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        // Try to update list if not updated yet
+        if (!viewModel.listUpdated) {
+            activity?.let {act ->
+                val global = Global()
+                if (global.isConnectedToInternet(act)) {
+                    viewModel.loadingAlertDialog?.setLoading(
+                        act,
+                        true,
+                        getString(R.string.dialog_loading_getComponents)
+                    )
+
+                    componentTypeId?.let { typeId ->
+                        val webservice = Webservice()
+                        webservice.getComponentsForType(typeId, object : CallbackWebserviceResult {
+                            override fun callbackCall(result: WebserviceResult) {
+                                activity?.let { act ->
+                                    act.runOnUiThread {
+                                        if (result.success) {
+                                            notConnectedToInternetTextView?.visibility = View.GONE
+                                            viewModel.listUpdated = true
+                                            filterList()
+                                        } else {
+                                            global.getErrorAlertDialog(act, result.error, null).show()
+                                        }
+
+                                        viewModel.loadingAlertDialog?.setLoading(act, false, "")
+                                    }
+                                }
+                            }
+                        })
+                    }
+                } else {
+                    notConnectedToInternetTextView?.visibility = View.VISIBLE
+                }
+            }
+        }
 
         showIfDataShouldSynchronize()
 
@@ -160,6 +199,7 @@ class ComponentListFragment : Fragment() {
 
         // Set views
         filterEditText = activity?.findViewById(R.id.filterEditText)
+        notConnectedToInternetTextView = activity?.findViewById(R.id.notConnectedToInternetTextView)
         swipeRefreshLayout = activity?.findViewById(R.id.swipeRefreshLayout)
         recyclerView = activity?.findViewById(R.id.recyclerView)
 
@@ -171,6 +211,9 @@ class ComponentListFragment : Fragment() {
         }
 
         filterEditText?.addTextChangedListener(filterEditTextTextWatcher)
+
+        // Hide not connected to internet message on create
+        notConnectedToInternetTextView?.visibility = View.GONE
 
         // Recycler view
         componentTypeId?.let { id ->

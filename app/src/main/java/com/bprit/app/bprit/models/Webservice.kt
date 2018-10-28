@@ -1,9 +1,12 @@
 package com.bprit.app.bprit.models
 
 import android.util.Log
+import com.bprit.app.bprit.data.RealmComponent
+import com.bprit.app.bprit.data.RealmComponentType
 import com.bprit.app.bprit.data.WebserviceResult
 import com.bprit.app.bprit.interfaces.CallbackWebservice
 import com.bprit.app.bprit.interfaces.CallbackWebserviceResult
+import io.realm.Realm
 
 import org.json.JSONException
 import org.json.JSONObject
@@ -147,41 +150,49 @@ class Webservice {
                     result.success = false
 
                 } else {
-                    if (statusCode in 200..299) {
+                    if (statusCode == 200) {
                         try {
                             val responseString = String(response, Charset.forName("UTF-8"))
                             val jsonObject = JSONObject(responseString)
 
-                            Log.d("DEBUG", "responseString: " + responseString)
+                            Log.d("DEBUG", "responseString: $responseString")
 
-//                            login.pin = jsonObject.optBoolean("pin")
-//                            login.sessionGUID = jsonObject.optString("sessionguid")
+                            val realm = Realm.getDefaultInstance()
+                            realm.beginTransaction()
+                            try {
+                                // Remove old realm objects
+                                realm.delete(RealmComponentType::class.java)
 
-//                            login.userData = WebserviceLoginUserData()
-//                            if (jsonObject.opt("userdata") != null) {
-//                                val jsonUserData = JSONObject(jsonObject.opt("userdata").toString())
-//                                login.userData.user_id = jsonUserData.optString("user_id")
-//                                login.userData.username = jsonUserData.optString("username")
-//                                login.userData.role = jsonUserData.optLong("role")
-//                                //                                Log.d("Debug", "login.userData.role: " + login.userData.role);
-//                                login.userData.required_app_version = jsonUserData.optString("required_app_version")
-//                                login.userData.default_location = jsonUserData.optString("default_location")
-//                            }
+                                // Create new realm objects
+                                val jsonArray = jsonObject.optJSONArray("componentTypes")
+                                for (i in 0..(jsonArray.length() - 1)) {
+                                    val componentType = jsonArray.optJSONObject(i)
+
+                                    val dateTimeFunctions = DateTimeFunctions()
+
+                                    val realmComponentType = RealmComponentType()
+                                    realmComponentType.id = componentType.optInt("id")
+                                    realmComponentType.name = componentType.optString("name")
+                                    realmComponentType.created =
+                                            dateTimeFunctions.getDateFromString(componentType.optString("created"))
+                                    realmComponentType.modified =
+                                            dateTimeFunctions.getDateFromString(componentType.optString("modified"))
+                                    realmComponentType.inStorage = componentType.optInt("inStorage")
+                                    realm.copyToRealm(realmComponentType)
+                                }
+                            } finally {
+                                realm.commitTransaction()
+                                realm.close()
+                            }
 
                             result.error = ""
                             result.success = true
 
-                        } catch (e: JSONException) {
-//                            Crashlytics.logException(e)
-                            if (result.error.equals("")) result.error = e.localizedMessage
-                            result.success = false
-
-                        } catch (e: UnsupportedEncodingException) {
+                        } catch (e: Exception) {
 //                            Crashlytics.logException(e)
                             if (result.error.equals("")) result.error = e.localizedMessage
                             result.success = false
                         }
-
                     } else {
                         result.error = statusCode.toString()
                         result.success = false
@@ -212,41 +223,71 @@ class Webservice {
                     result.success = false
 
                 } else {
-                    if (statusCode in 200..299) {
+                    if (statusCode == 200) {
                         try {
                             val responseString = String(response, Charset.forName("UTF-8"))
                             val jsonObject = JSONObject(responseString)
 
-                            Log.d("DEBUG", "responseString: " + responseString)
+                            Log.d("DEBUG", "responseString: $responseString")
 
-//                            login.pin = jsonObject.optBoolean("pin")
-//                            login.sessionGUID = jsonObject.optString("sessionguid")
+                            val realm = Realm.getDefaultInstance()
+                            realm.beginTransaction()
+                            try {
+                                // Remove old realm objects
+                                realm.delete(RealmComponent::class.java)
+                                realm.delete(RealmComponentType::class.java)
 
-//                            login.userData = WebserviceLoginUserData()
-//                            if (jsonObject.opt("userdata") != null) {
-//                                val jsonUserData = JSONObject(jsonObject.opt("userdata").toString())
-//                                login.userData.user_id = jsonUserData.optString("user_id")
-//                                login.userData.username = jsonUserData.optString("username")
-//                                login.userData.role = jsonUserData.optLong("role")
-//                                //                                Log.d("Debug", "login.userData.role: " + login.userData.role);
-//                                login.userData.required_app_version = jsonUserData.optString("required_app_version")
-//                                login.userData.default_location = jsonUserData.optString("default_location")
-//                            }
+                                // Create new realm objects
+                                val jsonArray = jsonObject.optJSONArray("components")
+                                for (i in 0..(jsonArray.length() - 1)) {
+                                    // Get json objects
+                                    val component = jsonArray.optJSONObject(i)
+                                    val componentType = component.optJSONObject("type")
+
+                                    // Create new realm objects
+                                    val dateTimeFunctions = DateTimeFunctions()
+
+                                    // Create component type if it does not already exist
+                                    val componentTypeId = componentType.optInt("id")
+                                    val existingType =
+                                        realm?.where(RealmComponentType::class.java)?.equalTo("id", componentTypeId)
+                                            ?.findFirst()
+                                    if (existingType == null) {
+                                        val realmComponentType = RealmComponentType()
+                                        realmComponentType.id = componentType.optInt("id")
+                                        realmComponentType.name = componentType.optString("name")
+                                        realmComponentType.created =
+                                                dateTimeFunctions.getDateFromString(componentType.optString("created"))
+                                        realmComponentType.modified =
+                                                dateTimeFunctions.getDateFromString(componentType.optString("modified"))
+                                        realmComponentType.inStorage = componentType.optInt("inStorage")
+                                        realm.copyToRealm(realmComponentType)
+                                    }
+
+                                    // Create component
+                                    val realmComponent = RealmComponent()
+                                    realmComponent.id = component.optInt("id").toString()
+                                    realmComponent.typeId = componentTypeId
+                                    realmComponent.created =
+                                            dateTimeFunctions.getDateFromString(component.optString("created"))
+                                    realmComponent.modified =
+                                            dateTimeFunctions.getDateFromString(component.optString("modified"))
+                                    realmComponent.usedIn = component.optInt("usedIn")
+                                    realm.copyToRealm(realmComponent)
+                                }
+                            } finally {
+                                realm.commitTransaction()
+                                realm.close()
+                            }
 
                             result.error = ""
                             result.success = true
 
-                        } catch (e: JSONException) {
-//                            Crashlytics.logException(e)
-                            if (result.error.equals("")) result.error = e.localizedMessage
-                            result.success = false
-
-                        } catch (e: UnsupportedEncodingException) {
+                        } catch (e: Exception) {
 //                            Crashlytics.logException(e)
                             if (result.error.equals("")) result.error = e.localizedMessage
                             result.success = false
                         }
-
                     } else {
                         result.error = statusCode.toString()
                         result.success = false
@@ -278,36 +319,74 @@ class Webservice {
                     result.success = false
 
                 } else {
-                    if (statusCode in 200..299) {
+                    if (statusCode == 200) {
                         try {
                             val responseString = String(response, Charset.forName("UTF-8"))
                             val jsonObject = JSONObject(responseString)
 
-                            Log.d("DEBUG", "responseString: " + responseString)
+                            Log.d("DEBUG", "responseString: $responseString")
 
-//                            login.pin = jsonObject.optBoolean("pin")
-//                            login.sessionGUID = jsonObject.optString("sessionguid")
+                            val realm = Realm.getDefaultInstance()
+                            realm.beginTransaction()
+                            try {
+                                // Remove old realm objects
+                                val ct = realm?.where(RealmComponentType::class.java)?.equalTo("id", typeId)?.findFirst()
+                                ct?.deleteFromRealm()
 
-//                            login.userData = WebserviceLoginUserData()
-//                            if (jsonObject.opt("userdata") != null) {
-//                                val jsonUserData = JSONObject(jsonObject.opt("userdata").toString())
-//                                login.userData.user_id = jsonUserData.optString("user_id")
-//                                login.userData.username = jsonUserData.optString("username")
-//                                login.userData.role = jsonUserData.optLong("role")
-//                                //                                Log.d("Debug", "login.userData.role: " + login.userData.role);
-//                                login.userData.required_app_version = jsonUserData.optString("required_app_version")
-//                                login.userData.default_location = jsonUserData.optString("default_location")
-//                            }
+                                val realmComponents = realm?.where(RealmComponent::class.java)?.equalTo("typeId", typeId)?.findAll()
+                                realmComponents?.let { components ->
+                                    for (component in components) {
+                                        component.deleteFromRealm()
+                                    }
+                                }
+
+                                // Create new realm objects
+                                val jsonArray = jsonObject.optJSONArray("components")
+                                for (i in 0..(jsonArray.length() - 1)) {
+                                    // Get json objects
+                                    val component = jsonArray.optJSONObject(i)
+                                    val componentType = component.optJSONObject("type")
+
+                                    // Create new realm objects
+                                    val dateTimeFunctions = DateTimeFunctions()
+
+                                    // Create component type if it does not already exist
+                                    val componentTypeId = componentType.optInt("id")
+                                    val existingType =
+                                        realm?.where(RealmComponentType::class.java)?.equalTo("id", componentTypeId)
+                                            ?.findFirst()
+                                    if (existingType == null) {
+                                        val realmComponentType = RealmComponentType()
+                                        realmComponentType.id = componentType.optInt("id")
+                                        realmComponentType.name = componentType.optString("name")
+                                        realmComponentType.created =
+                                                dateTimeFunctions.getDateFromString(componentType.optString("created"))
+                                        realmComponentType.modified =
+                                                dateTimeFunctions.getDateFromString(componentType.optString("modified"))
+                                        realmComponentType.inStorage = componentType.optInt("inStorage")
+                                        realm.copyToRealm(realmComponentType)
+                                    }
+
+                                    // Create component
+                                    val realmComponent = RealmComponent()
+                                    realmComponent.id = component.optInt("id").toString()
+                                    realmComponent.typeId = componentTypeId
+                                    realmComponent.created =
+                                            dateTimeFunctions.getDateFromString(component.optString("created"))
+                                    realmComponent.modified =
+                                            dateTimeFunctions.getDateFromString(component.optString("modified"))
+                                    realmComponent.usedIn = component.optInt("usedIn")
+                                    realm.copyToRealm(realmComponent)
+                                }
+                            } finally {
+                                realm.commitTransaction()
+                                realm.close()
+                            }
 
                             result.error = ""
                             result.success = true
 
-                        } catch (e: JSONException) {
-//                            Crashlytics.logException(e)
-                            if (result.error.equals("")) result.error = e.localizedMessage
-                            result.success = false
-
-                        } catch (e: UnsupportedEncodingException) {
+                        } catch (e: Exception) {
 //                            Crashlytics.logException(e)
                             if (result.error.equals("")) result.error = e.localizedMessage
                             result.success = false
@@ -345,41 +424,21 @@ class Webservice {
                     result.success = false
 
                 } else {
-                    if (statusCode in 200..299) {
+                    if (statusCode == 202) {
                         try {
                             val responseString = String(response, Charset.forName("UTF-8"))
                             val jsonObject = JSONObject(responseString)
 
-                            Log.d("DEBUG", "responseString: " + responseString)
-
-//                            login.pin = jsonObject.optBoolean("pin")
-//                            login.sessionGUID = jsonObject.optString("sessionguid")
-
-//                            login.userData = WebserviceLoginUserData()
-//                            if (jsonObject.opt("userdata") != null) {
-//                                val jsonUserData = JSONObject(jsonObject.opt("userdata").toString())
-//                                login.userData.user_id = jsonUserData.optString("user_id")
-//                                login.userData.username = jsonUserData.optString("username")
-//                                login.userData.role = jsonUserData.optLong("role")
-//                                //                                Log.d("Debug", "login.userData.role: " + login.userData.role);
-//                                login.userData.required_app_version = jsonUserData.optString("required_app_version")
-//                                login.userData.default_location = jsonUserData.optString("default_location")
-//                            }
+                            Log.d("DEBUG", "responseString: $responseString")
 
                             result.error = ""
                             result.success = true
 
-                        } catch (e: JSONException) {
-//                            Crashlytics.logException(e)
-                            if (result.error.equals("")) result.error = e.localizedMessage
-                            result.success = false
-
-                        } catch (e: UnsupportedEncodingException) {
+                        } catch (e: Exception) {
 //                            Crashlytics.logException(e)
                             if (result.error.equals("")) result.error = e.localizedMessage
                             result.success = false
                         }
-
                     } else {
                         result.error = statusCode.toString()
                         result.success = false
@@ -410,27 +469,21 @@ class Webservice {
                     result.success = false
 
                 } else {
-                    if (statusCode in 200..299) {
+                    if (statusCode == 200) {
                         try {
                             val responseString = String(response, Charset.forName("UTF-8"))
                             val jsonObject = JSONObject(responseString)
 
-                            Log.d("DEBUG", "responseString: " + responseString)
+                            Log.d("DEBUG", "responseString: $responseString")
 
                             result.error = ""
                             result.success = true
 
-                        } catch (e: JSONException) {
-//                            Crashlytics.logException(e)
-                            if (result.error.equals("")) result.error = e.localizedMessage
-                            result.success = false
-
-                        } catch (e: UnsupportedEncodingException) {
+                        } catch (e: Exception) {
 //                            Crashlytics.logException(e)
                             if (result.error.equals("")) result.error = e.localizedMessage
                             result.success = false
                         }
-
                     } else {
                         result.error = statusCode.toString()
                         result.success = false
@@ -461,27 +514,21 @@ class Webservice {
                     result.success = false
 
                 } else {
-                    if (statusCode in 200..299) {
+                    if (statusCode == 200) {
                         try {
                             val responseString = String(response, Charset.forName("UTF-8"))
                             val jsonObject = JSONObject(responseString)
 
-                            Log.d("DEBUG", "responseString: " + responseString)
+                            Log.d("DEBUG", "responseString: $responseString")
 
                             result.error = ""
                             result.success = true
 
-                        } catch (e: JSONException) {
-//                            Crashlytics.logException(e)
-                            if (result.error.equals("")) result.error = e.localizedMessage
-                            result.success = false
-
-                        } catch (e: UnsupportedEncodingException) {
+                        } catch (e: Exception) {
 //                            Crashlytics.logException(e)
                             if (result.error.equals("")) result.error = e.localizedMessage
                             result.success = false
                         }
-
                     } else {
                         result.error = statusCode.toString()
                         result.success = false
@@ -512,27 +559,21 @@ class Webservice {
                     result.success = false
 
                 } else {
-                    if (statusCode in 200..299) {
+                    if (statusCode == 200) {
                         try {
                             val responseString = String(response, Charset.forName("UTF-8"))
                             val jsonObject = JSONObject(responseString)
 
-                            Log.d("DEBUG", "responseString: " + responseString)
+                            Log.d("DEBUG", "responseString: $responseString")
 
                             result.error = ""
                             result.success = true
 
-                        } catch (e: JSONException) {
-//                            Crashlytics.logException(e)
-                            if (result.error.equals("")) result.error = e.localizedMessage
-                            result.success = false
-
-                        } catch (e: UnsupportedEncodingException) {
+                        } catch (e: Exception) {
 //                            Crashlytics.logException(e)
                             if (result.error.equals("")) result.error = e.localizedMessage
                             result.success = false
                         }
-
                     } else {
                         result.error = statusCode.toString()
                         result.success = false
