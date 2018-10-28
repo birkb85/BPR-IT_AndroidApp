@@ -169,7 +169,7 @@ class ComponentTypeListFragment : Fragment() {
             R.id.action_sync -> {
                 val synchronizeData = SynchronizeData()
                 synchronizeData.synchronizeData(object : CallbackSynchronizeData {
-                    override fun callbackCall(success: Boolean) {
+                    override fun callbackCall(success: Boolean, error: String) {
                         item.isVisible = !success
                     }
                 })
@@ -217,6 +217,8 @@ class ComponentTypeListFragment : Fragment() {
         componentTypeListRecyclerAdapter =
                 ComponentTypeListRecyclerAdapter(componentTypeListRecyclerViewOnClickListener)
         recyclerView?.adapter = componentTypeListRecyclerAdapter
+
+        // TODO Implement swipe to refresh
     }
 
 }

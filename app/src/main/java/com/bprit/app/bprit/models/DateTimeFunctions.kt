@@ -64,8 +64,6 @@ class DateTimeFunctions {
     fun beautifyDate(date: Date?): String? {
         var beautifulDate = ""
 
-        // TODO BB 2018-10-27. Test that this is working.
-
         date?.let {d ->
             try {
                 val calendar = getLocalizedCalendar()

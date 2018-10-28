@@ -49,6 +49,7 @@ class SynchronizeData {
      */
     fun synchronizeData(callback: CallbackSynchronizeData) {
         var success = true
+        var error = "" // TODO HTTP error / error message
 
         val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
@@ -77,6 +78,6 @@ class SynchronizeData {
             realm.close()
         }
 
-        callback.callbackCall(success)
+        callback.callbackCall(success, error)
     }
 }

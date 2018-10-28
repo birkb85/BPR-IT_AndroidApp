@@ -74,5 +74,6 @@
     <string name="componentDetails_created">Oprettet d.:</string>
     <string name="componentDetails_modified">Sidst ændret d.:</string>
     <string name="componentDetails_componentWillBeRemoved">Komponent vil blive slettet</string>
+    <string name="componentDetails_notConnectedToInternet">Tilslut enheden til internettet for at synkronisere</string>
 
 </resources>

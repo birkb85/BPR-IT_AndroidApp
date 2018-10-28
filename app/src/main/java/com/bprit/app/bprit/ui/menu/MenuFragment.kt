@@ -74,7 +74,7 @@ class MenuFragment : Fragment() {
             R.id.action_sync -> {
                 val synchronizeData = SynchronizeData()
                 synchronizeData.synchronizeData(object : CallbackSynchronizeData {
-                    override fun callbackCall(success: Boolean) {
+                    override fun callbackCall(success: Boolean, error: String) {
                         item.isVisible = !success
                     }
                 })
@@ -121,31 +121,6 @@ class MenuFragment : Fragment() {
         dateTextView?.text = dateTimeFunctions.beautifyDate(dateTimeFunctions.getCurrentDate())
 
         tasksLinearLayout?.setOnClickListener {
-//            val webservice = Webservice()
-//            webservice.testStatusTypes(object : CallbackWebserviceResult {
-//                override fun callbackCall(result: WebserviceResult) {
-//                    if (result.success) {
-//                        Log.d("DEBUG", "success: " + result.success.toString())
-//                        Log.d("DEBUG", "error: " + result.error)
-//                    } else {
-//                        activity?.let { act ->
-//                            act.runOnUiThread {
-//                                val global = Global()
-//                                global.getErrorAlertDialog(
-//                                    act,
-//                                    global.errorMessage(
-//                                        act,
-//                                        result.error
-//                                    ),
-//                                    null
-//                                ).show()
-//                            }
-//                        }
-//                    }
-//                }
-//            })
-
-            // TODO BB 2018-10-17. Temp go to task list.
             activity?.let { fragmentActivity ->
                 val intent = Intent(context, TaskListActivity::class.java)
                 startActivity(intent)
@@ -154,7 +129,6 @@ class MenuFragment : Fragment() {
         }
 
         componentsLinearLayout?.setOnClickListener {
-            // TODO BB 2018-10-17. Temp go to component type list.
             activity?.let { fragmentActivity ->
                 val intent = Intent(context, ComponentTypeListActivity::class.java)
                 startActivity(intent)

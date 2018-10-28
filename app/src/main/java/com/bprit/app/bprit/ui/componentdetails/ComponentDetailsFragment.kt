@@ -30,7 +30,7 @@ class ComponentDetailsFragment : Fragment() {
     var actionSyncMenuItem: MenuItem? = null
 
     private var componentId: Int? = null
-    private var componentTypeId: Int? = null // TODO Get this from previous activity
+    private var componentTypeId: Int? = null
 
     companion object {
         fun newInstance() = ComponentDetailsFragment()
@@ -53,9 +53,10 @@ class ComponentDetailsFragment : Fragment() {
                             val realm = Realm.getDefaultInstance()
                             realm.beginTransaction()
                             try {
-                                val realmComponent = realm?.where(RealmComponent::class.java)
+                                val realmComponent = realm?.where(RealmComponent::class.java) // TODO Maybe move to model!
                                     ?.equalTo("id", componentId.toString())
-                                    ?.equalTo("typeId", componentTypeId)?.findFirst()
+                                    ?.equalTo("typeId", componentTypeId)
+                                    ?.equalTo("isDeleted", false)?.findFirst()
                                 realmComponent?.let { component ->
                                     component.isDeleted = true
                                     component.shouldSynchronize = true
@@ -66,12 +67,6 @@ class ComponentDetailsFragment : Fragment() {
                             }
 
                             showIfDataShouldSynchronize()
-
-//                        val synchronizeData = SynchronizeData()
-//                        if (synchronizeData.shouldSynchronizeData()) {
-//                            activity?.finish()
-//                            activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-//                        }
                         }
                     },
                     null
@@ -83,9 +78,69 @@ class ComponentDetailsFragment : Fragment() {
     /**
      * Show if data should synchronize
      */
-    private fun showIfDataShouldSynchronize() {
+    private fun showIfDataShouldSynchronize() { // TODO Implement in other activities too. Move to model.
         val synchronizeData = SynchronizeData()
-        actionSyncMenuItem?.isVisible = synchronizeData.shouldSynchronizeData()
+        val shouldSynchronizeData = synchronizeData.shouldSynchronizeData()
+
+        actionSyncMenuItem?.isVisible = shouldSynchronizeData
+
+        activity?.let { act ->
+            val global = Global()
+            if (shouldSynchronizeData && global.isConnectedToInternet(act)) {
+                viewModel.loadingAlertDialog?.setLoading(
+                    act,
+                    true,
+                    getString(R.string.dialog_loading_synchronizeData)
+                )
+
+                synchronizeData.synchronizeData(object : CallbackSynchronizeData {
+                    override fun callbackCall(success: Boolean, error: String) {
+                        activity?.let { act ->
+                            act.runOnUiThread {
+                                if (success) {
+                                    actionSyncMenuItem?.isVisible = false
+
+                                    checkIfActivityShouldFinish()
+                                } else {
+                                    global.getErrorAlertDialog(act, error, null).show()
+                                }
+
+                                viewModel.loadingAlertDialog?.setLoading(act, false, "")
+                            }
+                        }
+                    }
+                })
+            } else {
+                checkIfActivityShouldFinish()
+            }
+        }
+    }
+
+    /**
+     * Check if component exist, if not close activity
+     */
+    fun checkIfActivityShouldFinish() { // TODO Move to model
+        activity?.let { act ->
+            var finish = true
+
+            val realm = Realm.getDefaultInstance()
+            val realmComponent = realm?.where(RealmComponent::class.java)
+                ?.equalTo("id", componentId.toString())
+                ?.equalTo("typeId", componentTypeId)
+                ?.equalTo("isDeleted", false)?.findFirst()
+            realmComponent?.let {
+                finish = false
+            }
+            realm.close()
+
+            if (finish) {
+                act.finish()
+                act.overridePendingTransition(
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out
+                )
+            }
+        }
     }
 
     override fun onResume() {
@@ -129,12 +184,23 @@ class ComponentDetailsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_sync -> {
-                val synchronizeData = SynchronizeData()
-                synchronizeData.synchronizeData(object : CallbackSynchronizeData {
-                    override fun callbackCall(success: Boolean) {
-                        item.isVisible = !success
+                context?.let { con ->
+                    val global = Global()
+                    if (global.isConnectedToInternet(con)) { // TODO Implement changes in other activities.
+                        val synchronizeData = SynchronizeData()
+                        synchronizeData.synchronizeData(object : CallbackSynchronizeData {
+                            override fun callbackCall(success: Boolean, error: String) {
+                                item.isVisible = !success
+                            }
+                        })
+                    } else {
+                        global.getMessageAlertDialog(
+                            con,
+                            getString(R.string.componentDetails_notConnectedToInternet),
+                            null
+                        ).show()
                     }
-                })
+                }
                 return true
             }
         }
@@ -176,10 +242,12 @@ class ComponentDetailsFragment : Fragment() {
         val realm = Realm.getDefaultInstance()
         val realmComponent = realm?.where(RealmComponent::class.java)
             ?.equalTo("id", componentId.toString())
-            ?.equalTo("typeId", componentTypeId)?.findFirst()
+            ?.equalTo("typeId", componentTypeId)
+            ?.equalTo("isDeleted", false)?.findFirst()
 
         val realmComponentType = realm?.where(RealmComponentType::class.java)
-            ?.equalTo("id", componentTypeId)?.findFirst()
+            ?.equalTo("id", componentTypeId)
+            ?.equalTo("isDeleted", false)?.findFirst()
 
         realmComponent?.let { component ->
             realmComponentType?.let { componentType ->
