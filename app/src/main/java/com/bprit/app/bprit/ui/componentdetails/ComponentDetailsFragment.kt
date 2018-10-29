@@ -12,10 +12,7 @@ import com.bprit.app.bprit.data.RealmComponent
 import com.bprit.app.bprit.data.RealmComponentType
 import com.bprit.app.bprit.interfaces.AlertDialogButtonOnClickListener
 import com.bprit.app.bprit.interfaces.CallbackSynchronizeData
-import com.bprit.app.bprit.models.DateTimeFunctions
-import com.bprit.app.bprit.models.Global
-import com.bprit.app.bprit.models.LoadingAlertDialog
-import com.bprit.app.bprit.models.SynchronizeData
+import com.bprit.app.bprit.models.*
 import io.realm.Realm
 
 class ComponentDetailsFragment : Fragment() {
@@ -39,7 +36,7 @@ class ComponentDetailsFragment : Fragment() {
     private lateinit var viewModel: ComponentDetailsViewModel
 
     /**
-     * Delete component
+     * Mark component as deleted, ready to synchronize
      */
     private val deleteButtonOnClickListener = object : View.OnClickListener {
         override fun onClick(p0: View?) {
@@ -50,20 +47,11 @@ class ComponentDetailsFragment : Fragment() {
                     getString(R.string.componentDetails_componentWillBeRemoved),
                     object : AlertDialogButtonOnClickListener {
                         override fun onClick() {
-                            val realm = Realm.getDefaultInstance()
-                            realm.beginTransaction()
-                            try {
-                                val realmComponent = realm?.where(RealmComponent::class.java) // TODO Maybe move to model!
-                                    ?.equalTo("id", componentId.toString())
-                                    ?.equalTo("typeId", componentTypeId)
-                                    ?.equalTo("isDeleted", false)?.findFirst()
-                                realmComponent?.let { component ->
-                                    component.isDeleted = true
-                                    component.shouldSynchronize = true
+                            val realmOperations = RealmOperations()
+                            componentTypeId?.let { typeId ->
+                                componentId?.let { id ->
+                                    realmOperations.syncDeleteComponent(typeId, id)
                                 }
-                            } finally {
-                                realm.commitTransaction()
-                                realm.close()
                             }
 
                             showIfDataShouldSynchronize()
@@ -78,7 +66,7 @@ class ComponentDetailsFragment : Fragment() {
     /**
      * Show if data should synchronize
      */
-    private fun showIfDataShouldSynchronize() { // TODO Implement in other activities too. Move to model.
+    private fun showIfDataShouldSynchronize() {
         val synchronizeData = SynchronizeData()
         val shouldSynchronizeData = synchronizeData.shouldSynchronizeData()
 
@@ -119,26 +107,19 @@ class ComponentDetailsFragment : Fragment() {
     /**
      * Check if component exist, if not close activity
      */
-    fun checkIfActivityShouldFinish() { // TODO Move to model
+    fun checkIfActivityShouldFinish() {
         activity?.let { act ->
-            var finish = true
-
-            val realm = Realm.getDefaultInstance()
-            val realmComponent = realm?.where(RealmComponent::class.java)
-                ?.equalTo("id", componentId.toString())
-                ?.equalTo("typeId", componentTypeId)
-                ?.equalTo("isDeleted", false)?.findFirst()
-            realmComponent?.let {
-                finish = false
-            }
-            realm.close()
-
-            if (finish) {
-                act.finish()
-                act.overridePendingTransition(
-                    android.R.anim.fade_in,
-                    android.R.anim.fade_out
-                )
+            componentTypeId?.let {typeId ->
+                componentId?.let {id ->
+                    val realmOperations = RealmOperations()
+                    if (realmOperations.isComponentDeleted(typeId, id)) {
+                        act.finish()
+                        act.overridePendingTransition(
+                            android.R.anim.fade_in,
+                            android.R.anim.fade_out
+                        )
+                    }
+                }
             }
         }
     }
@@ -184,22 +165,27 @@ class ComponentDetailsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_sync -> {
-                context?.let { con ->
+                activity?.let { act ->
                     val global = Global()
-                    if (global.isConnectedToInternet(con)) { // TODO Implement changes in other activities.
+                    if (global.isConnectedToInternet(act)) {
                         val synchronizeData = SynchronizeData()
                         synchronizeData.synchronizeData(object : CallbackSynchronizeData {
                             override fun callbackCall(success: Boolean, error: String) {
-                                item.isVisible = !success
+                                activity?.let { act ->
+                                    act.runOnUiThread {
+                                        item.isVisible = !success
+                                    }
+                                }
                             }
                         })
                     } else {
                         global.getMessageAlertDialog(
-                            con,
+                            act,
                             getString(R.string.componentDetails_notConnectedToInternet),
                             null
                         ).show()
                     }
+
                 }
                 return true
             }

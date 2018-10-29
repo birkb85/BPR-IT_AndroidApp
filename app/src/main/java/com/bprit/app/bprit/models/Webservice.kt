@@ -235,7 +235,7 @@ class Webservice {
                             try {
                                 // Remove old realm objects
                                 realm.delete(RealmComponent::class.java)
-                                realm.delete(RealmComponentType::class.java)
+//                                realm.delete(RealmComponentType::class.java) // BB 2018-10-29. Do not update type.
 
                                 // Create new realm objects
                                 val jsonArray = jsonObject.optJSONArray("components")
@@ -301,6 +301,7 @@ class Webservice {
 
     /**
      * Get components for type
+     * @param typeId id of component type
      * @param callback callback for result of webservice call
      */
     fun getComponentsForType(
@@ -330,8 +331,9 @@ class Webservice {
                             realm.beginTransaction()
                             try {
                                 // Remove old realm objects
-                                val ct = realm?.where(RealmComponentType::class.java)?.equalTo("id", typeId)?.findFirst()
-                                ct?.deleteFromRealm()
+                                // BB 2018-10-29. Do not update type.
+//                                val ct = realm?.where(RealmComponentType::class.java)?.equalTo("id", typeId)?.findFirst()
+//                                ct?.deleteFromRealm()
 
                                 val realmComponents = realm?.where(RealmComponent::class.java)?.equalTo("typeId", typeId)?.findAll()
                                 realmComponents?.let { components ->
@@ -405,18 +407,20 @@ class Webservice {
 
     /**
      * Delete component
+     * @param typeId id of type for component
+     * @param id component id
      * @param callback callback for result of webservice call
      */
     fun deleteComponent(
         typeId: Int,
-        componentId: Int,
+        id: Int,
         callback: CallbackWebserviceResult
     ) {
-        val url = getApiStorageUrl() + "/component-types/$typeId/components/$componentId"
+        val url = getApiStorageUrl() + "/component-types/$typeId/components/$id"
         val contentType = "application/json; charset=utf-8"
         val body = ""
 
-        webservice(url, contentType, "GET", body, object : CallbackWebservice {
+        webservice(url, contentType, "DELETE", body, object : CallbackWebservice {
             override fun callbackCall(response: ByteArray, error: String, statusCode: Int) {
                 val result = WebserviceResult()
                 if (error != "") {
@@ -426,11 +430,6 @@ class Webservice {
                 } else {
                     if (statusCode == 202) {
                         try {
-                            val responseString = String(response, Charset.forName("UTF-8"))
-                            val jsonObject = JSONObject(responseString)
-
-                            Log.d("DEBUG", "responseString: $responseString")
-
                             result.error = ""
                             result.success = true
 

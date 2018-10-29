@@ -4,12 +4,16 @@ import android.content.Context
 import android.content.pm.PackageManager
 import com.bprit.app.bprit.data.RealmComponent
 import com.bprit.app.bprit.data.RealmComponentType
+import com.bprit.app.bprit.data.WebserviceResult
 import com.bprit.app.bprit.interfaces.CallbackSynchronizeData
+import com.bprit.app.bprit.interfaces.CallbackWebserviceResult
 import io.realm.Realm
 import io.realm.RealmResults
+import java.util.concurrent.CountDownLatch
+
 
 /**
- * Realm operations
+ * Synchronize data
  */
 class SynchronizeData {
 
@@ -49,35 +53,54 @@ class SynchronizeData {
      */
     fun synchronizeData(callback: CallbackSynchronizeData) {
         var success = true
-        var error = "" // TODO HTTP error / error message
+        var error = ""
 
-        val realm = Realm.getDefaultInstance()
-        realm.beginTransaction()
-        try {
-            // Sync component types
-            val realmComponentTypeRealmResults =
-                realm?.where(RealmComponentType::class.java)?.equalTo("shouldSynchronize", true)?.findAll()
-            realmComponentTypeRealmResults?.let { results ->
-                for (componentType in results) {
-                    // TODO BB 2018-10-27. Component types are not synched at the moment..
-                    componentType.shouldSynchronize = false
-                }
+        val thread = Thread(Runnable {
+            var numberOfRealmComponents = 0
+            val realm = Realm.getDefaultInstance()
+            val realmComponents = realm?.where(RealmComponent::class.java)
+                ?.equalTo("shouldSynchronize", true)
+                ?.findAll()
+            realmComponents?.let { comps ->
+                numberOfRealmComponents = comps.size
             }
 
-            // Sync components
-            val realmComponentRealmResults =
-                realm?.where(RealmComponent::class.java)?.equalTo("shouldSynchronize", true)?.findAll()
-            realmComponentRealmResults?.let { results ->
-                for (component in results) {
-                    // TODO BB 2018-10-27. Components are not synched at the moment..
-                    component.shouldSynchronize = false
+            val number = numberOfRealmComponents
+            val countDownLatch = CountDownLatch(number)
+
+            val realmOperations = RealmOperations()
+            val webservice = Webservice()
+            realmComponents?.let { comps ->
+                for (comp in comps) {
+                    comp.typeId?.let { compTypeId ->
+                        comp.id?.let { compId ->
+                            webservice.deleteComponent(compTypeId, compId.toInt(), object : CallbackWebserviceResult {
+                                override fun callbackCall(result: WebserviceResult) {
+                                    if (result.success) {
+                                        success = realmOperations.deleteComponent(compTypeId, compId.toInt())
+                                    } else {
+                                        success = false
+                                        if (error == "") error = result.error
+                                    }
+
+                                    countDownLatch.countDown()
+                                }
+                            })
+                        }
+                    }
                 }
             }
-        } finally {
-            realm.commitTransaction()
             realm.close()
-        }
 
-        callback.callbackCall(success, error)
+            try {
+                countDownLatch.await()
+            } catch (e: InterruptedException) {
+                success = false
+//                Crashlytics.logException(e)
+            }
+
+            callback.callbackCall(success, error)
+        })
+        thread.start()
     }
 }

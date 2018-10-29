@@ -88,9 +88,38 @@ class ComponentListFragment : Fragment() {
     /**
      * Show if data should synchronize
      */
-    fun showIfDataShouldSynchronize() {
+    private fun showIfDataShouldSynchronize() {
         val synchronizeData = SynchronizeData()
-        actionSyncMenuItem?.isVisible = synchronizeData.shouldSynchronizeData()
+        val shouldSynchronizeData = synchronizeData.shouldSynchronizeData()
+
+        actionSyncMenuItem?.isVisible = shouldSynchronizeData
+
+        activity?.let { act ->
+            val global = Global()
+            if (shouldSynchronizeData && global.isConnectedToInternet(act)) {
+                viewModel.loadingAlertDialog?.setLoading(
+                    act,
+                    true,
+                    getString(R.string.dialog_loading_synchronizeData)
+                )
+
+                synchronizeData.synchronizeData(object : CallbackSynchronizeData {
+                    override fun callbackCall(success: Boolean, error: String) {
+                        activity?.let { act ->
+                            act.runOnUiThread {
+                                if (success) {
+                                    actionSyncMenuItem?.isVisible = false
+                                } else {
+                                    global.getErrorAlertDialog(act, error, null).show()
+                                }
+
+                                viewModel.loadingAlertDialog?.setLoading(act, false, "")
+                            }
+                        }
+                    }
+                })
+            }
+        }
     }
 
     override fun onResume() {
@@ -174,12 +203,28 @@ class ComponentListFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_sync -> {
-                val synchronizeData = SynchronizeData()
-                synchronizeData.synchronizeData(object : CallbackSynchronizeData {
-                    override fun callbackCall(success: Boolean, error: String) {
-                        item.isVisible = !success
+                activity?.let { act ->
+                    val global = Global()
+                    if (global.isConnectedToInternet(act)) {
+                        val synchronizeData = SynchronizeData()
+                        synchronizeData.synchronizeData(object : CallbackSynchronizeData {
+                            override fun callbackCall(success: Boolean, error: String) {
+                                activity?.let { act ->
+                                    act.runOnUiThread {
+                                        item.isVisible = !success
+                                    }
+                                }
+                            }
+                        })
+                    } else {
+                        global.getMessageAlertDialog(
+                            act,
+                            getString(R.string.componentDetails_notConnectedToInternet),
+                            null
+                        ).show()
                     }
-                })
+
+                }
                 return true
             }
         }
