@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
+apply plugin: 'org.jetbrains.dokka'
 
 android {
     compileSdkVersion 27
@@ -19,6 +20,14 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    dokka {
+        outputFormat = 'gfm'
+        outputDirectory = "$buildDir/javadoc"
+        noStdlibLink = 'true'
+        skipDeprecated = 'true'
+        reportNotDocumented = 'false'
+        skipEmptyPackages = 'true'
     }
 }
 
