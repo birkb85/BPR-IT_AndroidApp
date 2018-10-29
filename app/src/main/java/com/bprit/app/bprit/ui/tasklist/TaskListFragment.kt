@@ -71,10 +71,14 @@ class TaskListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        showIfDataShouldSynchronize()
-
         // Restore loading
         viewModel.loadingAlertDialog?.onResume()
+
+        viewModel.loadingAlertDialog?.isLoading?.let { isLoading ->
+            if (!isLoading) {
+                showIfDataShouldSynchronize()
+            }
+        }
     }
 
     override fun onPause() {

@@ -122,54 +122,78 @@ class ComponentListFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    var swipeRefreshLayoutOnRefreshListener: SwipeRefreshLayout.OnRefreshListener =
+        SwipeRefreshLayout.OnRefreshListener {
+            viewModel.listUpdated = false
+            updateList()
+        }
 
-        // Try to update list if not updated yet
+    /**
+     * Try to update list if not updated yet
+     */
+    private fun updateList() {
         if (!viewModel.listUpdated) {
             activity?.let {act ->
                 val global = Global()
                 if (global.isConnectedToInternet(act)) {
-                    viewModel.loadingAlertDialog?.setLoading(
-                        act,
-                        true,
-                        getString(R.string.dialog_loading_getComponents)
-                    )
+                    val synchronizeData = SynchronizeData()
+                    if (!synchronizeData.shouldSynchronizeData()) {
+                        viewModel.loadingAlertDialog?.setLoading(
+                            act,
+                            true,
+                            getString(R.string.dialog_loading_getComponents)
+                        )
 
-                    // TODO Synchronize before getting list
+                        componentTypeId?.let { typeId ->
+                            val webservice = Webservice()
+                            webservice.getComponentsForType(typeId, object : CallbackWebserviceResult {
+                                override fun callbackCall(result: WebserviceResult) {
+                                    activity?.let { act ->
+                                        act.runOnUiThread {
+                                            if (result.success) {
+                                                notConnectedToInternetTextView?.visibility = View.GONE
+                                                viewModel.listUpdated = true
+                                                filterList()
+                                            } else {
+                                                global.getErrorAlertDialog(act, result.error, null).show()
+                                            }
 
-                    componentTypeId?.let { typeId ->
-                        val webservice = Webservice()
-                        webservice.getComponentsForType(typeId, object : CallbackWebserviceResult {
-                            override fun callbackCall(result: WebserviceResult) {
-                                activity?.let { act ->
-                                    act.runOnUiThread {
-                                        if (result.success) {
-                                            notConnectedToInternetTextView?.visibility = View.GONE
-                                            viewModel.listUpdated = true
-                                            filterList()
-                                        } else {
-                                            global.getErrorAlertDialog(act, result.error, null).show()
+                                            viewModel.loadingAlertDialog?.setLoading(act, false, "")
+                                            swipeRefreshLayout?.isRefreshing = false
                                         }
-
-                                        viewModel.loadingAlertDialog?.setLoading(act, false, "")
                                     }
                                 }
-                            }
-                        })
+                            })
+                        }
+                    } else {
+                        notConnectedToInternetTextView?.text = getString(R.string.componentList_synchronizeBeforeReloadData)
+                        notConnectedToInternetTextView?.visibility = View.VISIBLE
+                        swipeRefreshLayout?.isRefreshing = false
                     }
                 } else {
+                    notConnectedToInternetTextView?.text = getString(R.string.componentList_notConnectedToInternet)
                     notConnectedToInternetTextView?.visibility = View.VISIBLE
+                    swipeRefreshLayout?.isRefreshing = false
                 }
             }
         }
+    }
 
-        showIfDataShouldSynchronize()
-
-        filterList()
+    override fun onResume() {
+        super.onResume()
 
         // Restore loading
         viewModel.loadingAlertDialog?.onResume()
+
+        viewModel.loadingAlertDialog?.isLoading?.let { isLoading ->
+            if (!isLoading) {
+                updateList()
+
+                showIfDataShouldSynchronize()
+
+                filterList()
+            }
+        }
     }
 
     override fun onPause() {
@@ -271,7 +295,8 @@ class ComponentListFragment : Fragment() {
             recyclerView?.adapter = componentListRecyclerAdapter
         }
 
-        // TODO Implement swipe to refresh
+        // Swipe to refresh
+        swipeRefreshLayout?.setOnRefreshListener(swipeRefreshLayoutOnRefreshListener);
     }
 
 }

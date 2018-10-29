@@ -58,12 +58,14 @@
     <string name="componentTypeList_filter">Søg</string>
     <string name="componentTypeList_name">Type:</string>
     <string name="componentTypeList_inStorage">Antal:</string>
+    <string name="componentTypeList_synchronizeBeforeReloadData">Synkroniser data før liste kan opdateres</string>
     <string name="componentTypeList_notConnectedToInternet">Tilslut enhed til internettet for at opdatere liste</string>
 
     <!-- Component List -->
     <string name="componentList_title">BPR-IT - Komponenter</string>
     <string name="componentList_filter">Søg</string>
     <string name="componentList_serial">Serienummer:</string>
+    <string name="componentList_synchronizeBeforeReloadData">Synkroniser data før liste kan opdateres</string>
     <string name="componentList_notConnectedToInternet">Tilslut enhed til internettet for at opdatere liste</string>
 
     <!-- Component Details -->
