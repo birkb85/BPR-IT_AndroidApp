@@ -18,8 +18,8 @@ import io.realm.Realm
 import io.realm.Sort
 
 /**
- * Component type list recycler adaptor
- * @param componentTypeListRecyclerViewOnClickListener cell on click listener
+ * Component type list recycler adaptor.
+ * @param componentTypeListRecyclerViewOnClickListener cell on click listener.
  */
 class ComponentTypeListRecyclerAdapter(
     private val componentTypeListRecyclerViewOnClickListener: ComponentTypeListRecyclerViewOnClickListener
@@ -29,8 +29,8 @@ class ComponentTypeListRecyclerAdapter(
     private var realmComponentTypeRealmResults: RealmResults<RealmComponentType>? = null
 
     /**
-     * View holder for adaptor
-     * @param view view for the viewholder
+     * View holder for adaptor.
+     * @param view view for the viewholder.
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private var v = view
@@ -51,8 +51,8 @@ class ComponentTypeListRecyclerAdapter(
     }
 
     /**
-     * Filter list of cells in adaptor by string
-     * @param filter only show cells which contains this filter
+     * Filter list of cells in adaptor by string.
+     * @param filter only show cells which contains this filter.
      */
     fun filterList(filter: String) {
         val fieldNames = arrayOf("name")
@@ -63,11 +63,22 @@ class ComponentTypeListRecyclerAdapter(
         notifyDataSetChanged()
     }
 
+    /**
+     * Method called when creating viewholder.
+     * @param parent group of view.
+     * @param viewType type of view, useful if several types of view are displayed in the same list.
+     * @return the view holder created.
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ComponentTypeListRecyclerAdapter.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.cell_component_type, parent, false)
         return ViewHolder(view)
     }
 
+    /**
+     * Method called when binding viewholder to recyclerview.
+     * @param holder the recycled viewholder to be binded.
+     * @param position on the recyclerview list.
+     */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         realmComponentTypeRealmResults?.let { results ->
             if (position < results.size) {
@@ -92,6 +103,10 @@ class ComponentTypeListRecyclerAdapter(
         }
     }
 
+    /**
+     * Method called when adaptor is requesting the number of items to be loaded.
+     * @return number of items to be loaded.
+     */
     override fun getItemCount(): Int {
         realmComponentTypeRealmResults?.let { results ->
             return results.size
@@ -100,6 +115,11 @@ class ComponentTypeListRecyclerAdapter(
         return 0
     }
 
+    /**
+     * Method called when adaptor is attached to recyclerview.
+     * Open connection to local database here.
+     * @param recyclerView the recyclerview the adaptor is being attached to.
+     */
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
 
@@ -112,6 +132,11 @@ class ComponentTypeListRecyclerAdapter(
                     ?.findAll()
     }
 
+    /**
+     * Method called when adaptor is detached from recyclerview.
+     * Close connection to local database here.
+     * @param recyclerView the recyclerview the adaptor is detached from.
+     */
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
 

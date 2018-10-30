@@ -15,9 +15,9 @@ import com.bprit.app.bprit.data.AzureADGraphResponse
 // TODO BB 2018-10-25. App gets a token when logging in. This token should be renewed if it expires. Implement this.
 
 /**
- * Handles AzureAD communication
- * Example: https://docs.microsoft.com/en-us/azure/active-directory/develop/tutorial-v2-android
- * Heavily modified for our custom use
+ * Handles AzureAD communication.
+ * Example: https://docs.microsoft.com/en-us/azure/active-directory/develop/tutorial-v2-android.
+ * Heavily modified for our custom use.
  */
 class AzureAD {
 
@@ -34,9 +34,9 @@ class AzureAD {
     private var azureADGraphResponse: AzureADGraphResponse? = null
 
     /**
-     * Sign in to Azure AD
-     * @param activity context
-     * @param callback callback to call when finished
+     * Sign in to Azure AD.
+     * @param activity context.
+     * @param callback callback to call when finished.
      */
     fun signIn(activity: FragmentActivity, callback: CallbackAzureAD) {
         /* Configure your sample app and save state for this activity */
@@ -76,9 +76,9 @@ class AzureAD {
     }
 
     /**
-     * Sign out of Azure AD
-     * @param activity context
-     * @param callback callback to call when finished
+     * Sign out of Azure AD.
+     * @param activity context.
+     * @param callback callback to call when finished.
      */
     fun signOut(activity: FragmentActivity, callback: CallbackAzureAD) {
         /* Configure your sample app and save state for this activity */
@@ -124,16 +124,16 @@ class AzureAD {
     }
 
     /**
-     * Get Azure AD token
-     * @return token
+     * Get Azure AD token.
+     * @return token.
      */
     fun getToken() : String? {
         return authResult?.idToken
     }
 
     /**
-     * Get Azure AD user display name
-     * @return display name
+     * Get Azure AD user display name.
+     * @return display name.
      */
     fun getDisplayName() : String? {
         return azureADGraphResponse?.displayName
@@ -141,9 +141,9 @@ class AzureAD {
 
     /**
      * Callback used for silent request. If succeeds we use the access token to call the Microsoft Graph.
-     * @param activity context
-     * @param callback callback to call when finished
-     * @return callback with result
+     * @param activity context.
+     * @param callback callback to call when finished.
+     * @return callback with result.
      */
     private fun getAuthSilentCallback(activity: FragmentActivity, callback: CallbackAzureAD): AuthenticationCallback {
         return object : AuthenticationCallback {
@@ -186,9 +186,9 @@ class AzureAD {
 
     /**
      * Callback used for interactive request. If succeeds we use the access token to call the Microsoft Graph.
-     * @param activity context
-     * @param callback callback to call when finished
-     * @return callback with result
+     * @param activity context.
+     * @param callback callback to call when finished.
+     * @return callback with result.
      */
     private fun getAuthInteractiveCallback(activity: FragmentActivity, callback: CallbackAzureAD): AuthenticationCallback {
         return object : AuthenticationCallback {
@@ -228,19 +228,19 @@ class AzureAD {
     }
 
     /**
-     * Handles the redirect from the System Browser
-     * @param requestCode request code of activity result
-     * @param resultCode result code of activity result
-     * @param data data of activity result
+     * Handles the redirect from the System Browser.
+     * @param requestCode request code of activity result.
+     * @param resultCode result code of activity result.
+     * @param data data of activity result.
      */
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         azureADApp?.handleInteractiveRequestRedirect(requestCode, resultCode, data)
     }
 
     /**
-     * Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token
-     * @param activity context
-     * @param callback the callback to call when finished
+     * Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token.
+     * @param activity context.
+     * @param callback the callback to call when finished.
      */
     private fun callGraphAPI(activity: FragmentActivity, callback: CallbackAzureAD) {
 //        Log.d(TAG, "Starting volley request to graph")
@@ -289,8 +289,8 @@ class AzureAD {
 
     /**
      * Sets the Graph response, and call callback that user is signed in successfully.
-     * @param graphResponse the response from graph
-     * @param callback the callback to call when finished
+     * @param graphResponse the response from graph.
+     * @param callback the callback to call when finished.
      */
     private fun updateGraphUI(graphResponse: JSONObject, callback: CallbackAzureAD) {
 //        Log.d(TAG, "updateGraphUI: " + graphResponse.toString())
@@ -314,10 +314,10 @@ class AzureAD {
     }
 
     /**
-     * Call callback with parameters, and set global variable isSignedIn
-     * @param callback callback to call
-     * @param success if is successful
-     * @param isSignedIn if is signed in
+     * Call callback with parameters, and set global variable isSignedIn.
+     * @param callback callback to call.
+     * @param success if is successful.
+     * @param isSignedIn if is signed in.
      */
     private fun callCallback(callback: CallbackAzureAD, success: Boolean, isSignedIn: Boolean) {
         Global.isSignedIn = isSignedIn

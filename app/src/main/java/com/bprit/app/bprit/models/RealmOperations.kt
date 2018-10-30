@@ -5,13 +5,13 @@ import io.realm.Realm
 import java.lang.Exception
 
 /**
- * Realm operations
+ * Realm operations.
  */
 class RealmOperations {
     /**
-     * Mark component as deleted and that it should synchronize
-     * @param typeId type id of component
-     * @param id id of component
+     * Mark component as deleted and that it should be synchronized.
+     * @param typeId type id of component.
+     * @param id id of component.
      */
     fun syncDeleteComponent(typeId: Int, id: Int) {
         val realm = Realm.getDefaultInstance()
@@ -33,10 +33,10 @@ class RealmOperations {
     }
 
     /**
-     * Delete component from realm
-     * @param typeId type id of component
-     * @param id id of component
-     * @return if component is deleted
+     * Delete component from realm.
+     * @param typeId type id of component.
+     * @param id id of component.
+     * @return if component is deleted.
      */
     fun deleteComponent(typeId: Int, id: Int): Boolean {
         var deleted = false
@@ -60,10 +60,10 @@ class RealmOperations {
     }
 
     /**
-     * Check if component is deleted
-     * @param typeId type id of component
-     * @param id id of component
-     * @return if component is deleted
+     * Check if component is deleted.
+     * @param typeId type id of component.
+     * @param id id of component.
+     * @return if component is deleted.
      */
     fun isComponentDeleted(typeId: Int, id: Int): Boolean {
         var isDeleted = true

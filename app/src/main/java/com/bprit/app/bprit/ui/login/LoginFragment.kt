@@ -20,7 +20,9 @@ import com.bprit.app.bprit.models.Global
 import com.bprit.app.bprit.models.LoadingAlertDialog
 import io.realm.Realm
 
-
+/**
+ * Login fragment.
+ */
 class LoginFragment : Fragment() {
 
     companion object {
@@ -32,66 +34,6 @@ class LoginFragment : Fragment() {
     var signInOutButton: Button? = null
     var menuButton: Button? = null
     var versionTextView: TextView? = null
-
-//    fun showAlert() {
-//        // Initialize a new instance of
-//        context?.let {
-//            val builder = AlertDialog.Builder(it)
-//
-//            // Set the alert dialog title
-//            builder.setTitle("App background color")
-//
-//            // Display a message on alert dialog
-//            builder.setMessage("Are you want to set the app background color to RED?")
-//
-//            // Set a positive button and its click listener on alert dialog
-//            builder.setPositiveButton("YES"){dialog, which ->
-//                // Do something when user press the positive button
-//                Toast.makeText(it,"Ok, we change the app background.",Toast.LENGTH_SHORT).show()
-//
-//                // Change the app background color
-//                //root_layout.setBackgroundColor(Color.RED)
-//            }
-//
-//
-//            // Display a negative button on alert dialog
-//            builder.setNegativeButton("No"){dialog,which ->
-//                Toast.makeText(it,"You are not agree.",Toast.LENGTH_SHORT).show()
-//            }
-//
-//
-//            // Display a neutral button on alert dialog
-//            builder.setNeutralButton("Cancel"){_,_ ->
-//                Toast.makeText(it,"You cancelled the dialog.",Toast.LENGTH_SHORT).show()
-//            }
-//
-//            // Finally, make the alert dialog using builder
-//            val dialog: AlertDialog = builder.create()
-//
-//            // Display the alert dialog on app interface
-//            dialog.show()
-//        }
-//    }
-
-    //                // Example on calling Realm
-//                val realm = Realm.getDefaultInstance()
-//                realm.beginTransaction()
-//                try {
-//                    // Remove old object from Realm
-//                    realm.delete(AzureADGraphResponse::class.java)
-//
-//                    // Create new object in Realm
-//                    val realmAzureAD = AzureADGraphResponse()
-//                    realmAzureAD.idToken = authenticationResult.idToken
-//                    realm.copyToRealm(realmAzureAD)
-//                } finally {
-//                    realm.commitTransaction()
-//                    realm.close()
-//                }
-
-//    fun setAzureADOnActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        Global.azureAD?.onActivityResult(requestCode, resultCode, data)
-//    }
 
     /**
      * Callback handling Azure AD result
@@ -129,6 +71,9 @@ class LoginFragment : Fragment() {
         }
     }
 
+    /**
+     * Method called when fragment resumes.
+     */
     override fun onResume() {
         super.onResume()
 
@@ -136,6 +81,9 @@ class LoginFragment : Fragment() {
         viewModel.loadingAlertDialog?.onResume()
     }
 
+    /**
+     * Method called when fragment pauses.
+     */
     override fun onPause() {
         super.onPause()
 
@@ -143,12 +91,23 @@ class LoginFragment : Fragment() {
         viewModel.loadingAlertDialog?.onPause()
     }
 
+    /**
+     * Method called when view is created.
+     * @param inflater the layout inflator used to inflate the view into the fragment.
+     * @param container view group container.
+     * @param savedInstanceState variable holding data if activity is recreated after being destroyed.
+     * @return the view containing the inflated layout.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         return inflater.inflate(R.layout.login_fragment, container, false)
     }
 
+    /**
+     * Method called when activity is created.
+     * @param savedInstanceState variable holding data if activity is recreated after being destroyed.
+     */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
@@ -210,56 +169,5 @@ class LoginFragment : Fragment() {
             val version = context.getString(R.string.login_version) + " " + applicationInformation.getVersion(context)
             versionTextView?.text = version
         }
-
-//        // BB 2018-10-26. Remove at release. Test create componenttypes.
-//        val realm = Realm.getDefaultInstance()
-//        realm.beginTransaction()
-//        try {
-//            val realmComponentTypeRealmResults = realm.where(RealmComponentType::class.java).findAll()
-//            realmComponentTypeRealmResults?.let { results ->
-//                if (results.size == 0) {
-//                    for (i in 1..10) {
-//                        // Create new objects in Realm
-//                        val realmComponentType = RealmComponentType()
-//                        realmComponentType.id = i
-//                        realmComponentType.name = "Test $i"
-//                        realmComponentType.inStorage = 10
-////                        if (i == 9) {
-////                            realmComponentType.isDeleted = true
-////                            realmComponentType.shouldSynchronize = true
-////                        }
-//                        realm.copyToRealm(realmComponentType)
-//                    }
-//                }
-//            }
-//
-//            val realmComponentRealmResults = realm.where(RealmComponent::class.java).findAll()
-//            realmComponentRealmResults?.let { results ->
-//                if (results.size == 0) {
-//                    for (i in 1..10) {
-//                        val realmComponentType = realm.where(RealmComponentType::class.java).equalTo("id", 1 as Int).findFirst()
-//                        if (realmComponentType == null) {
-//                            val realmComponentTypeNew = RealmComponentType()
-//                            realmComponentTypeNew.id = 1
-//                            realmComponentTypeNew.name = "Test 1"
-//                            realmComponentTypeNew.inStorage = 10
-//                            realm.copyToRealm(realmComponentTypeNew)
-//                        }
-//
-//                        val realmComponent = RealmComponent()
-//                        realmComponent.id = i.toString()
-//                        realmComponent.typeId = 1
-//                        if (i == 9) {
-//                            realmComponent.isDeleted = true
-//                            realmComponent.shouldSynchronize = true
-//                        }
-//                        realm.copyToRealm(realmComponent)
-//                    }
-//                }
-//            }
-//        } finally {
-//            realm.commitTransaction()
-//            realm.close()
-//        }
     }
 }

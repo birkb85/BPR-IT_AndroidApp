@@ -5,7 +5,7 @@ import java.util.*
 
 
 /**
- * Realm object containing component type details
+ * Realm object containing component type details.
  */
 open class RealmComponentType(
     open var id: Int? = null,

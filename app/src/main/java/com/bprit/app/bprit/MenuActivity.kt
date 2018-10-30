@@ -12,12 +12,15 @@ import android.widget.Toast
 import com.bprit.app.bprit.interfaces.CallbackSynchronizeData
 import com.bprit.app.bprit.models.SynchronizeData
 
-
+/**
+ * Menu activity.
+ */
 class MenuActivity : AppCompatActivity() {
 
-    // BB 2018-10-26. Unused (used in three dot menu)
-//    private val MENU_APPROVE = Menu.FIRST
-
+    /**
+     * Method called when activity is created.
+     * @param savedInstanceState variable holding data if activity is recreated after being destroyed.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.menu_activity)
@@ -28,18 +31,17 @@ class MenuActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Method called when key is pressed on device.
+     * @param keyCode the key code of the key.
+     * @param event the event of the key.
+     * @return returns true if key is handled in method, else event is returned.
+     */
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
                 // Back button is clicked
                 finish()
-
-                // If I need to restart application, use this code below.
-//                val intent = Intent(this, LoginActivity::class.java)
-//                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-//                        Intent.FLAG_ACTIVITY_CLEAR_TASK // Afslut alle activities der måtte være i baggrunden.
-//                startActivity(intent)
-
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                 return true
             }
@@ -47,36 +49,14 @@ class MenuActivity : AppCompatActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
+    /**
+     * Method called when options menu is created.
+     * @param menu the menu instance object created.
+     * @return true if menu is created
+     */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_menu, menu)
         return true
     }
-
-    // BB 2018-10-26. How to create three dots menu
-//    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-////        val fragment = supportFragmentManager.findFragmentById(R.id.container) as MenuFragment
-//        menu.clear()
-////        if (fragment.getShowMenuOptionApprove()) menu.add(0, MENU_APPROVE, Menu.NONE, "Test")
-//        menu.add(0, MENU_APPROVE, Menu.NONE, "Test")
-//        return super.onPrepareOptionsMenu(menu)
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        val id = item.getItemId()
-//
-//        val fragment = supportFragmentManager.findFragmentById(R.id.container) as MenuFragment
-//
-//        when (id) {
-//            MENU_APPROVE -> {
-////                fragment.approveDay()
-//                return true
-//            }
-//        }
-//
-//        return super.onOptionsItemSelected(item)
-//    }
 }

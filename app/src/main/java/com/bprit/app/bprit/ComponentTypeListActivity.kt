@@ -10,8 +10,15 @@ import com.bprit.app.bprit.interfaces.CallbackSynchronizeData
 import com.bprit.app.bprit.models.SynchronizeData
 import com.bprit.app.bprit.ui.componenttypelist.ComponentTypeListFragment
 
+/**
+ * Component type list activity.
+ */
 class ComponentTypeListActivity : AppCompatActivity() {
 
+    /**
+     * Method called when activity is created.
+     * @param savedInstanceState variable holding data if activity is recreated after being destroyed.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.component_type_list_activity)
@@ -22,6 +29,12 @@ class ComponentTypeListActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Method called when key is pressed on device.
+     * @param keyCode the key code of the key.
+     * @param event the event of the key.
+     * @return returns true if key is handled in method, else event is returned.
+     */
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
@@ -34,6 +47,11 @@ class ComponentTypeListActivity : AppCompatActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
+    /**
+     * Method called when options menu is created.
+     * @param menu the menu instance object created.
+     * @return true if menu is created
+     */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_component_type_list, menu)

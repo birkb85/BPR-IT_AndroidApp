@@ -17,37 +17,41 @@ import java.net.URL
 import java.nio.charset.Charset
 
 /**
- * Handling Webservice communication
+ * Handles webservice communication.
  */
 class Webservice {
 
     /**
-     * @return Orders API url
+     * Orders API url.
+     * @return Orders API url.
      */
-    fun getApiOrdersUrl(): String = "http://bpr-orders.f66c82vmic.eu-west-1.elasticbeanstalk.com"
+    private fun getApiOrdersUrl(): String = "http://bpr-orders.f66c82vmic.eu-west-1.elasticbeanstalk.com"
 
     /**
-     * @return Customers API url
+     * Customers API url.
+     * @return Customers API url.
      */
-    fun getApiCustomersUrl(): String = "http://bpr-customers.ysd42f9gnn.eu-west-1.elasticbeanstalk.com"
+    private fun getApiCustomersUrl(): String = "http://bpr-customers.ysd42f9gnn.eu-west-1.elasticbeanstalk.com"
 
     /**
-     * @return Status API url
+     * Status API url.
+     * @return Status API url.
      */
-    fun getApiStatusUrl(): String = "http://bpr-status.evihmpjzgs.eu-west-1.elasticbeanstalk.com"
+    private fun getApiStatusUrl(): String = "http://bpr-status.evihmpjzgs.eu-west-1.elasticbeanstalk.com"
 
     /**
-     * @return Storage API url
+     * Storage API url.
+     * @return Storage API url.
      */
-    fun getApiStorageUrl(): String = "http://bpr-storage.pkm4p6b32g.eu-west-1.elasticbeanstalk.com/"
+    private fun getApiStorageUrl(): String = "http://bpr-storage.pkm4p6b32g.eu-west-1.elasticbeanstalk.com/"
 
     /**
-     * Webservice API communication
-     * @param urlStr url for webservice to call
-     * @param contentType content type for request
-     * @param httpMethod http method
-     * @param body body of request
-     * @param callback callback for webservice response
+     * Webservice API communication.
+     * @param urlStr url for webservice to call.
+     * @param contentType content type for request.
+     * @param httpMethod http method.
+     * @param body body of request.
+     * @param callback callback for webservice response.
      */
     private fun webservice(
         urlStr: String,
@@ -132,8 +136,8 @@ class Webservice {
     }
 
     /**
-     * Get component types
-     * @param callback callback for result of webservice call
+     * Get component types.
+     * @param callback callback for result of webservice call.
      */
     fun getComponentTypes(
         callback: CallbackWebserviceResult
@@ -205,8 +209,8 @@ class Webservice {
     }
 
     /**
-     * Get all components
-     * @param callback callback for result of webservice call
+     * Get all components.
+     * @param callback callback for result of webservice call.
      */
     fun getAllComponents(
         callback: CallbackWebserviceResult
@@ -300,9 +304,9 @@ class Webservice {
     }
 
     /**
-     * Get components for type
-     * @param typeId id of component type
-     * @param callback callback for result of webservice call
+     * Get components for type.
+     * @param typeId id of component type.
+     * @param callback callback for result of webservice call.
      */
     fun getComponentsForType(
         typeId: Int,
@@ -406,10 +410,10 @@ class Webservice {
     }
 
     /**
-     * Delete component
-     * @param typeId id of type for component
-     * @param id component id
-     * @param callback callback for result of webservice call
+     * Delete component.
+     * @param typeId id of type for component.
+     * @param id component id.
+     * @param callback callback for result of webservice call.
      */
     fun deleteComponent(
         typeId: Int,
@@ -450,8 +454,8 @@ class Webservice {
     }
 
     /**
-     * Testing Orders API
-     * @param callback callback for result of webservice call
+     * Testing Orders API.
+     * @param callback callback for result of webservice call.
      */
     fun testOrder(
         callback: CallbackWebserviceResult
@@ -495,8 +499,8 @@ class Webservice {
     }
 
     /**
-     * Testing Customers API
-     * @param callback callback for result of webservice call
+     * Testing Customers API.
+     * @param callback callback for result of webservice call.
      */
     fun testCustomer(
         callback: CallbackWebserviceResult
@@ -540,8 +544,8 @@ class Webservice {
     }
 
     /**
-     * Testing Status API
-     * @param callback callback for result of webservice call
+     * Testing Status API.
+     * @param callback callback for result of webservice call.
      */
     fun testStatusTypes(
         callback: CallbackWebserviceResult

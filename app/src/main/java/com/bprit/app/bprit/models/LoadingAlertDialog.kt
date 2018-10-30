@@ -7,7 +7,7 @@ import android.widget.TextView
 
 
 /**
- * Loading AlertDialog
+ * Dialog for displaying loading messages.
  */
 class LoadingAlertDialog(activity: FragmentActivity) {
 
@@ -17,7 +17,7 @@ class LoadingAlertDialog(activity: FragmentActivity) {
     var loadingText = ""
 
     /**
-     * Create loading alert dialog
+     * Initialise loading alert dialog
      */
     init {
         val alertDialogBuilder = AlertDialog.Builder(activity)
@@ -30,10 +30,10 @@ class LoadingAlertDialog(activity: FragmentActivity) {
     }
 
     /**
-     * Set loading
-     * @param activity context of activity / fragment
-     * @param isLoading if loading dialog should show / dismiss
-     * @param text text to be displayed in loading dialog
+     * Set loading dialog should be displayed or not.
+     * @param activity context of activity.
+     * @param isLoading if loading dialog should show / dismiss.
+     * @param text text to be displayed in loading dialog.
      */
     fun setLoading(activity: FragmentActivity, isLoading: Boolean, text: String) {
         activity.runOnUiThread {
@@ -52,7 +52,8 @@ class LoadingAlertDialog(activity: FragmentActivity) {
     }
 
     /**
-     * Run at on resume event for activity / fragment
+     * Run at on resume event of activity / fragment.
+     * Resumes loading.
      */
     fun onResume() {
         loadingAlertDialog?.let { lad ->
@@ -63,7 +64,8 @@ class LoadingAlertDialog(activity: FragmentActivity) {
     }
 
     /**
-     * Run at on pause event for activity / fragment
+     * Run at on pause event for activity / fragment.
+     * Pauses loading.
      */
     fun onPause() {
         loadingAlertDialog?.let { lad ->

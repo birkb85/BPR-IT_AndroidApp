@@ -5,7 +5,7 @@ import org.json.JSONArray
 
 
 /**
- * AzureAD Realm object containing AzureAD details
+ * AzureAD Realm object containing AzureAD details.
  */
 class AzureADGraphResponse(
     var odatacontext: String = "",

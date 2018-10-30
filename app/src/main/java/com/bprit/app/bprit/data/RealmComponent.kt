@@ -5,7 +5,7 @@ import java.util.*
 
 
 /**
- * Realm object containing component details
+ * Realm object containing component details.
  */
 open class RealmComponent(
     open var id: String? = null, // BB 2018-10-27. Has to be String, because it is simulating serial number

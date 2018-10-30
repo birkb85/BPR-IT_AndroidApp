@@ -2,7 +2,7 @@ package com.bprit.app.bprit.data
 
 
 /**
- * Webservice result containing status for webservice call
+ * Webservice result containing status for webservice call.
  */
 class WebserviceResult {
     var error = ""

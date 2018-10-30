@@ -15,6 +15,9 @@ import com.bprit.app.bprit.interfaces.CallbackSynchronizeData
 import com.bprit.app.bprit.models.*
 import io.realm.Realm
 
+/**
+ * Component details fragment
+ */
 class ComponentDetailsFragment : Fragment() {
 
     var serialHeadingTextView: TextView? = null
@@ -124,6 +127,9 @@ class ComponentDetailsFragment : Fragment() {
         }
     }
 
+    /**
+     * Method called when fragment resumes.
+     */
     override fun onResume() {
         super.onResume()
 
@@ -137,6 +143,9 @@ class ComponentDetailsFragment : Fragment() {
         }
     }
 
+    /**
+     * Method called when fragment pauses.
+     */
     override fun onPause() {
         super.onPause()
 
@@ -144,6 +153,10 @@ class ComponentDetailsFragment : Fragment() {
         viewModel.loadingAlertDialog?.onPause()
     }
 
+    /**
+     * Method called when fragment is created.
+     * @param savedInstanceState variable holding data if activity is recreated after being destroyed.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -159,6 +172,11 @@ class ComponentDetailsFragment : Fragment() {
         }
     }
 
+    /**
+     * Method called when options menu is created.
+     * @param menu the menu instance object created.
+     * @param inflater the menu inflater.
+     */
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
 
@@ -166,6 +184,11 @@ class ComponentDetailsFragment : Fragment() {
         showIfDataShouldSynchronize()
     }
 
+    /**
+     * Method called when option is selection in option menu.
+     * @param item the item selected.
+     * @return return true if 'item selected' event is handled here, else return the event.
+     */
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_sync -> {
@@ -198,6 +221,13 @@ class ComponentDetailsFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
+    /**
+     * Method called when view is created.
+     * @param inflater the layout inflator used to inflate the view into the fragment.
+     * @param container view group container.
+     * @param savedInstanceState variable holding data if activity is recreated after being destroyed.
+     * @return the view containing the inflated layout.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -205,6 +235,10 @@ class ComponentDetailsFragment : Fragment() {
         return inflater.inflate(R.layout.component_details_fragment, container, false)
     }
 
+    /**
+     * Method called when activity is created.
+     * @param savedInstanceState variable holding data if activity is recreated after being destroyed.
+     */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(ComponentDetailsViewModel::class.java)

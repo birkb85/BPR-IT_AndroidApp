@@ -7,12 +7,13 @@ import java.text.SimpleDateFormat
 
 
 /**
- * Date and time fuctions
+ * Date and time fuctions.
  */
 class DateTimeFunctions {
 
     /**
-     * @return Localized calendar with Danish settings
+     * Get localized calendar with Danish settings.
+     * @return Localized calendar with Danish settings.
      */
     fun getLocalizedCalendar(): Calendar {
         val calendar = Calendar.getInstance()
@@ -22,6 +23,7 @@ class DateTimeFunctions {
     }
 
     /**
+     * Get current date.
      * @return Current date formatted as 'yyyy-MM-dd'.
      */
     fun getCurrentDate(): String {
@@ -32,9 +34,9 @@ class DateTimeFunctions {
     }
 
     /**
-     * Make date beautiful
-     * @param date date formatted as 'yyyy-MM-dd'
-     * @return date formatted as 'dd.MM.yyyy'
+     * Make date beautiful.
+     * @param date date formatted as 'yyyy-MM-dd'.
+     * @return date formatted as 'dd.MM.yyyy'.
      */
     fun beautifyDate(date: String): String {
         var beautifulDate = date
@@ -57,9 +59,9 @@ class DateTimeFunctions {
     }
 
     /**
-     * Make date beautiful
-     * @param date date object
-     * @return date formatted as 'dd.MM.yyyy'
+     * Make date beautiful.
+     * @param date date object.
+     * @return date formatted as 'dd.MM.yyyy'.
      */
     fun beautifyDate(date: Date?): String? {
         var beautifulDate = ""
@@ -80,9 +82,9 @@ class DateTimeFunctions {
     }
 
     /**
-     * Get date from string
-     * @param date date string formatted as 'yyyy-MM-dd'
-     * @return date date object
+     * Get date from string.
+     * @param date date string formatted as 'yyyy-MM-dd'.
+     * @return date date object.
      */
     fun getDateFromString(date: String) : Date? {
         var d: Date? = null

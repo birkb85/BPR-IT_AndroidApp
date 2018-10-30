@@ -13,13 +13,13 @@ import java.util.concurrent.CountDownLatch
 
 
 /**
- * Synchronize data
+ * Synchronize data with Web API.
  */
 class SynchronizeData {
 
     /**
-     * Check if application should sync data
-     * @return if application should synchronize data
+     * Check if application should sync data.
+     * @return if application should synchronize data.
      */
     fun shouldSynchronizeData(): Boolean {
         var shouldSync = false
@@ -48,8 +48,8 @@ class SynchronizeData {
     }
 
     /**
-     * Synchronize data
-     * @param callback callback called when finished synchronizing data
+     * Synchronize data.
+     * @param callback callback called when finished synchronizing data.
      */
     fun synchronizeData(callback: CallbackSynchronizeData) {
         var success = true

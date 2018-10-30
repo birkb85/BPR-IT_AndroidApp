@@ -21,27 +21,35 @@ import android.view.View
 
 
 /**
- * Global functions
+ * Global methods.
  */
 class Global : Application() {
     companion object {
         /**
-         * Preference file key for saving to local preferences
+         * Preference file key for saving to local preferences.
          */
         fun getPreferenceFileKey(): String = "SharedPreferences"
 
         /**
-         * Time interval when selecting time in spinner
+         * Time interval when selecting time in spinner.
          */
         fun getMinuteTimeInterval(): Int = 5
 
+        /**
+         * Flag showing if user is signed in or not.
+         */
         var isSignedIn: Boolean = false
 
+        /**
+         * Global instance of the Azure AD connection, accessible from all other classes.
+         */
         var azureAD: AzureAD? = null
     }
 
-//    private var context: Context? = null
-
+    /**
+     * Global class initialised when application is launched.
+     * Initialise global accessible variables here.
+     */
     override fun onCreate() {
         super.onCreate()
 
@@ -54,17 +62,17 @@ class Global : Application() {
         // The Realm file will be located in Context.getFilesDir() with name "default.realm"
 
         // Debug realm
-        val config = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build() // Only while developing the app!!!
+//        val config = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build() // Only while developing the app!!!
 
         // Release realm
         // To make an migration bump "schemaVersion" 1 up and write the changes in the method "realmMigration".
         // TODO Public version has schema version 0! When next version is made public set schema version to 1 and collect migrations in "oldVersion == 0".
-//        val config = RealmConfiguration.Builder().schemaVersion(0).migration(realmMigration).build()
+        val config = RealmConfiguration.Builder().schemaVersion(0).migration(realmMigration).build()
         Realm.setDefaultConfiguration(config)
     }
 
     /**
-     *  Handles migrations in release version
+     *  Handles migrations in release version.
      */
     var realmMigration: RealmMigration = RealmMigration { realm, oldVersion, newVersion ->
         // More info at: https://realm.io/docs/java/latest/#migrations
@@ -72,34 +80,18 @@ class Global : Application() {
 
         // ----------- DO NOT EDIT MIGRATIONS ABOVE THIS LINE --------------
 
+        // Example on migration
 //        if (oldVersion < 1) {
 //            schema.create("AzureADGraphResponse")
 //                .addField("idToken", String::class.java)
 //        }
-
-
-        // Eksempel på migration
-        //            if (oldVersion == 0) {
-        //                schema.create("Person")
-        //                        .addField("name", String.class)
-        //                        .addField("age", int.class);
-        //                oldVersion++;
-        //            }
-        //
-        //            if (oldVersion == 1) {
-        //                schema.get("Person")
-        //                        .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
-        //                        .addRealmObjectField("favoriteDog", schema.get("Dog"))
-        //                        .addRealmListField("dogs", schema.get("Dog"));
-        //                oldVersion++;
-        //            }
     }
 
     /**
-     * User friendly message for error
-     * @param context context of activity
-     * @param error http status code / error message
-     * @return friendly message
+     * User friendly message for error.
+     * @param context context of activity.
+     * @param error http status code / error message.
+     * @return friendly message.
      */
     private fun errorMessage(
         context: Context,
@@ -130,11 +122,11 @@ class Global : Application() {
     }
 
     /**
-     * Default dialog showing an error, is using friendly errors for error codes
-     * @param context context of activity
-     * @param error error code / text to display in alert dialog
-     * @param onClickListener callback when clicking on button
-     * @return alert dialog
+     * Default dialog showing an error, is using friendly errors for error codes.
+     * @param context context of activity.
+     * @param error error code / text to display in alert dialog.
+     * @param onClickListener callback when clicking on button.
+     * @return alert dialog.
      */
     fun getErrorAlertDialog(
         context: Context,
@@ -145,11 +137,11 @@ class Global : Application() {
     }
 
     /**
-     * Default dialog showing an message
-     * @param context context of activity
-     * @param message message to display
-     * @param onClickListener callback when clicking on button
-     * @return alert dialog
+     * Default dialog showing an message.
+     * @param context context of activity.
+     * @param message message to display.
+     * @param onClickListener callback when clicking on button.
+     * @return alert dialog.
      */
     fun getMessageAlertDialog(
         context: Context,
@@ -179,12 +171,12 @@ class Global : Application() {
     }
 
     /**
-     * Default dialog showing an message, asking for confirmation
-     * @param context context of activity
-     * @param message message to display
-     * @param okOnClickListener callback when confirming action
-     * @param cancelOnClickListener callback when canceling action
-     * @return alert dialog
+     * Default dialog showing an message, asking for confirmation.
+     * @param context context of activity.
+     * @param message message to display.
+     * @param okOnClickListener callback when confirming action.
+     * @param cancelOnClickListener callback when canceling action.
+     * @return alert dialog.
      */
     fun getConfirmAlertDialog(
         context: Context,
@@ -221,9 +213,9 @@ class Global : Application() {
     }
 
     /**
-     * Check if unit is connected to the internet
-     * @param context context of activity
-     * @return unit is connected to the internet
+     * Check if unit is connected to the internet.
+     * @param context context of activity.
+     * @return unit is connected to the internet.
      */
     fun isConnectedToInternet(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

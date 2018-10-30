@@ -4,14 +4,14 @@ import android.content.Context
 import android.content.pm.PackageManager
 
 /**
- * Get information about application
+ * Get information about application.
  */
 class ApplicationInformation {
 
     /**
-     * Get version name of application
-     * @param context context of activity / fragment
-     * @return The version name
+     * Get version name of application.
+     * @param context context of activity / fragment.
+     * @return The version name.
      */
     fun getVersion(context : Context): String {
         try {
