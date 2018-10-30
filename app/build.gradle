@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
-//apply plugin: 'org.jetbrains.dokka'
+apply plugin: 'org.jetbrains.dokka'
 
 android {
     compileSdkVersion 27
@@ -21,7 +21,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    /*
     dokka {
         outputFormat = 'html'
         outputDirectory = "$buildDir/javadoc"
@@ -29,7 +28,6 @@ android {
         skipDeprecated = 'true'
         skipEmptyPackages = 'true'
     }
-    */
 }
 
 dependencies {

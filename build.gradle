@@ -14,7 +14,7 @@ buildscript {
         // in the individual module build.gradle files
 
         classpath "io.realm:realm-gradle-plugin:5.7.0"
-        //classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.17"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.17"
     }
 }
 
