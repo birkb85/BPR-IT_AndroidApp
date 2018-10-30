@@ -25,15 +25,15 @@ import io.realm.Realm
  */
 class LoginFragment : Fragment() {
 
+    private var signInOutButton: Button? = null
+    private var menuButton: Button? = null
+    private var versionTextView: TextView? = null
+
     companion object {
         fun newInstance() = LoginFragment()
     }
 
     private lateinit var viewModel: LoginViewModel
-
-    var signInOutButton: Button? = null
-    var menuButton: Button? = null
-    var versionTextView: TextView? = null
 
     /**
      * Callback handling Azure AD result

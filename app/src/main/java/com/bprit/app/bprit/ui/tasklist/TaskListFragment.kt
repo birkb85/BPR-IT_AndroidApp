@@ -21,12 +21,12 @@ import com.bprit.app.bprit.models.SynchronizeData
  */
 class TaskListFragment : Fragment() {
 
-    var filterEditText: EditText? = null
-    var detailsButton: Button? = null
-    var swipeRefreshLayout: SwipeRefreshLayout? = null
-    var recyclerView: RecyclerView? = null
+    private var filterEditText: EditText? = null
+    private var detailsButton: Button? = null
+    private var swipeRefreshLayout: SwipeRefreshLayout? = null
+    private var recyclerView: RecyclerView? = null
 
-    var actionSyncMenuItem: MenuItem? = null
+    private var actionSyncMenuItem: MenuItem? = null
 
     companion object {
         fun newInstance() = TaskListFragment()

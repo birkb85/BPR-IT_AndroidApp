@@ -11,7 +11,7 @@ class ComponentTypeListViewModel : ViewModel() {
     /**
      * Flag showing if list has been updated.
      */
-    var listUpdated = false
+    var listUpdated: Boolean = false
 
     /**
      * Instance of loading dialog to be displayed in this activity.

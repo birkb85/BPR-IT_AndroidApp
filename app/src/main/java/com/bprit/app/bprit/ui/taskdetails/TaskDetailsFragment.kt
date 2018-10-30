@@ -15,7 +15,7 @@ import com.bprit.app.bprit.models.SynchronizeData
  */
 class TaskDetailsFragment : Fragment() {
 
-    var actionSyncMenuItem: MenuItem? = null
+    private var actionSyncMenuItem: MenuItem? = null
 
     companion object {
         fun newInstance() = TaskDetailsFragment()

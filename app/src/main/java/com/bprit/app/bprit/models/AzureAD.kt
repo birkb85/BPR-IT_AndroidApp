@@ -21,12 +21,12 @@ import com.bprit.app.bprit.data.AzureADGraphResponse
  */
 class AzureAD {
 
-    private val CLIENT_ID = "ea3501cb-f257-4d92-96e5-1f534d4343d1" //"[Enter the application Id here]";
-    private val SCOPES = arrayOf("https://graph.microsoft.com/User.Read")
-    private val MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me"
+    private val CLIENT_ID: String = "ea3501cb-f257-4d92-96e5-1f534d4343d1" //"[Enter the application Id here]";
+    private val SCOPES: Array<String> = arrayOf("https://graph.microsoft.com/User.Read")
+    private val MSGRAPH_URL: String = "https://graph.microsoft.com/v1.0/me"
 
     /* UI & Debugging Variables */
-    private val TAG = "DEBUG"
+    private val TAG: String = "DEBUG"
 
     /* Azure AD Variables */
     private var azureADApp: PublicClientApplication? = null

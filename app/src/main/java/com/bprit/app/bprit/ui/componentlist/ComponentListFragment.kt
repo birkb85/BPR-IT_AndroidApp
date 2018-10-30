@@ -26,12 +26,12 @@ import com.bprit.app.bprit.models.*
  */
 class ComponentListFragment : Fragment() {
 
-    var filterEditText: EditText? = null
-    var notConnectedToInternetTextView: TextView? = null
-    var swipeRefreshLayout: SwipeRefreshLayout? = null
-    var recyclerView: RecyclerView? = null
+    private var filterEditText: EditText? = null
+    private var notConnectedToInternetTextView: TextView? = null
+    private var swipeRefreshLayout: SwipeRefreshLayout? = null
+    private var recyclerView: RecyclerView? = null
 
-    var actionSyncMenuItem: MenuItem? = null
+    private var actionSyncMenuItem: MenuItem? = null
 
     private var linearLayoutManager: LinearLayoutManager? = null
     private var componentListRecyclerAdapter: ComponentListRecyclerAdapter? = null
@@ -125,7 +125,7 @@ class ComponentListFragment : Fragment() {
         }
     }
 
-    var swipeRefreshLayoutOnRefreshListener: SwipeRefreshLayout.OnRefreshListener =
+    private var swipeRefreshLayoutOnRefreshListener: SwipeRefreshLayout.OnRefreshListener =
         SwipeRefreshLayout.OnRefreshListener {
             viewModel.listUpdated = false
             updateList()

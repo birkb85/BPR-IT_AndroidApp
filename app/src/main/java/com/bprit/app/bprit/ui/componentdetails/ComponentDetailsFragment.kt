@@ -20,14 +20,14 @@ import io.realm.Realm
  */
 class ComponentDetailsFragment : Fragment() {
 
-    var serialHeadingTextView: TextView? = null
-    var deleteButton: Button? = null
-    var serialTextView: TextView? = null
-    var typeTextView: TextView? = null
-    var createdTextView: TextView? = null
-    var modifiedTextView: TextView? = null
+    private var serialHeadingTextView: TextView? = null
+    private var deleteButton: Button? = null
+    private var serialTextView: TextView? = null
+    private var typeTextView: TextView? = null
+    private var createdTextView: TextView? = null
+    private var modifiedTextView: TextView? = null
 
-    var actionSyncMenuItem: MenuItem? = null
+    private var actionSyncMenuItem: MenuItem? = null
 
     private var componentId: Int? = null
     private var componentTypeId: Int? = null
@@ -110,7 +110,7 @@ class ComponentDetailsFragment : Fragment() {
     /**
      * Check if component exist, if not close activity
      */
-    fun checkIfActivityShouldFinish() {
+    private fun checkIfActivityShouldFinish() {
         activity?.let { act ->
             componentTypeId?.let {typeId ->
                 componentId?.let {id ->

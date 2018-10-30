@@ -21,13 +21,13 @@ import com.bprit.app.bprit.models.*
  */
 class MenuFragment : Fragment() {
 
-    var nameTextView: TextView? = null
-    var dateTextView: TextView? = null
-    var tasksLinearLayout: LinearLayout? = null
-    var tasksDividerView: View? = null
-    var componentsLinearLayout: LinearLayout? = null
+    private var nameTextView: TextView? = null
+    private var dateTextView: TextView? = null
+    private var tasksLinearLayout: LinearLayout? = null
+    private var tasksDividerView: View? = null
+    private var componentsLinearLayout: LinearLayout? = null
 
-    var actionSyncMenuItem: MenuItem? = null
+    private var actionSyncMenuItem: MenuItem? = null
 
     companion object {
         fun newInstance() = MenuFragment()
