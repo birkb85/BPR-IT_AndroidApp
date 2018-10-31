@@ -22,11 +22,28 @@ android {
         }
     }
     dokka {
-        outputFormat = 'html'
+        outputFormat = 'javadoc'
         outputDirectory = "$buildDir/javadoc"
-        noStdlibLink = 'true'
-        skipDeprecated = 'true'
-        skipEmptyPackages = 'true'
+        packageOptions {
+            prefix = "android"
+            suppress = true
+        }
+        packageOptions {
+            prefix = "com.android"
+            suppress = true
+        }
+        packageOptions {
+            prefix = "io"
+            suppress = true
+        }
+        packageOptions {
+            prefix = "com.microsoft"
+            suppress = true
+        }
+        packageOptions {
+            prefix = "com.getkeepsafe"
+            suppress = true
+        }
     }
 }
 

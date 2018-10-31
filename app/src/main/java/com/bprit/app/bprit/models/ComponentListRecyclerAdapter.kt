@@ -37,7 +37,7 @@ class ComponentListRecyclerAdapter(
      * @param view view for the viewholder.
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private var v = view
+        private var v: View = view
         var serialTextView: TextView = view.findViewById(R.id.serialTextView)
 
         fun bindOnClickListener(id: Int?, listener: ComponentListRecyclerViewOnClickListener) {
