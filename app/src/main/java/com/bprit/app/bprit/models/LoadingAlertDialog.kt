@@ -11,10 +11,10 @@ import android.widget.TextView
  */
 class LoadingAlertDialog(activity: FragmentActivity) {
 
-    var isLoading = false
-    var loadingAlertDialog: AlertDialog? = null
-    var loadingTextView: TextView? = null
-    var loadingText = ""
+    var isLoading: Boolean = false
+    private var loadingAlertDialog: AlertDialog? = null
+    private var loadingTextView: TextView? = null
+    private var loadingText: String = ""
 
     /**
      * Initialise loading alert dialog

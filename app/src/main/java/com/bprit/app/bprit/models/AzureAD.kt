@@ -149,9 +149,9 @@ class AzureAD {
         return object : AuthenticationCallback {
             override fun onSuccess(authenticationResult: AuthenticationResult) {
                 /* Successfully got a token, call Graph now */
-                Log.d(TAG, "Successfully authenticated")
-                Log.d(TAG, "ID Token: " + authenticationResult.idToken)
-                Log.d(TAG, "Expires On: " + authenticationResult.expiresOn)
+//                Log.d(TAG, "Successfully authenticated")
+//                Log.d(TAG, "ID Token: " + authenticationResult.idToken)
+//                Log.d(TAG, "Expires On: " + authenticationResult.expiresOn)
 
                 /* Store the authResult */
                 authResult = authenticationResult
@@ -194,9 +194,9 @@ class AzureAD {
         return object : AuthenticationCallback {
             override fun onSuccess(authenticationResult: AuthenticationResult) {
                 /* Successfully got a token, call graph now */
-                Log.d(TAG, "Successfully authenticated")
-                Log.d(TAG, "ID Token: " + authenticationResult.idToken)
-                Log.d(TAG, "Expires On: " + authenticationResult.expiresOn)
+//                Log.d(TAG, "Successfully authenticated")
+//                Log.d(TAG, "ID Token: " + authenticationResult.idToken)
+//                Log.d(TAG, "Expires On: " + authenticationResult.expiresOn)
 
                 /* Store the auth result */
                 authResult = authenticationResult

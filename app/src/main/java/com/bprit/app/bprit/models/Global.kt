@@ -74,7 +74,7 @@ class Global : Application() {
     /**
      *  Handles migrations in release version.
      */
-    var realmMigration: RealmMigration = RealmMigration { realm, oldVersion, newVersion ->
+    private var realmMigration: RealmMigration = RealmMigration { realm, oldVersion, newVersion ->
         // More info at: https://realm.io/docs/java/latest/#migrations
         val schema = realm.schema
 

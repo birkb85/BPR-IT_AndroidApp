@@ -22,28 +22,10 @@ import java.nio.charset.Charset
 class Webservice {
 
     /**
-     * Orders API url.
-     * @return Orders API url.
-     */
-    private fun getApiOrdersUrl(): String = "http://bpr-orders.f66c82vmic.eu-west-1.elasticbeanstalk.com"
-
-    /**
-     * Customers API url.
-     * @return Customers API url.
-     */
-    private fun getApiCustomersUrl(): String = "http://bpr-customers.ysd42f9gnn.eu-west-1.elasticbeanstalk.com"
-
-    /**
-     * Status API url.
-     * @return Status API url.
-     */
-    private fun getApiStatusUrl(): String = "http://bpr-status.evihmpjzgs.eu-west-1.elasticbeanstalk.com"
-
-    /**
-     * Storage API url.
+     * API url.
      * @return Storage API url.
      */
-    private fun getApiStorageUrl(): String = "http://bpr-storage.pkm4p6b32g.eu-west-1.elasticbeanstalk.com/"
+    private fun getApiUrl(): String = "https://mlvs2zry92.execute-api.eu-west-1.amazonaws.com/Prod"
 
     /**
      * Webservice API communication.
@@ -142,7 +124,7 @@ class Webservice {
     fun getComponentTypes(
         callback: CallbackWebserviceResult
     ) {
-        val url = getApiStorageUrl() + "/component-types"
+        val url = getApiUrl() + "/component-types"
         val contentType = "application/json; charset=utf-8"
         val body = ""
 
@@ -215,7 +197,7 @@ class Webservice {
     fun getAllComponents(
         callback: CallbackWebserviceResult
     ) {
-        val url = getApiStorageUrl() + "/component-types/components"
+        val url = getApiUrl() + "/component-types/components"
         val contentType = "application/json; charset=utf-8"
         val body = ""
 
@@ -312,7 +294,7 @@ class Webservice {
         typeId: Int,
         callback: CallbackWebserviceResult
     ) {
-        val url = getApiStorageUrl() + "/component-types/$typeId/components"
+        val url = getApiUrl() + "/component-types/$typeId/components"
         val contentType = "application/json; charset=utf-8"
         val body = ""
 
@@ -420,7 +402,7 @@ class Webservice {
         id: Int,
         callback: CallbackWebserviceResult
     ) {
-        val url = getApiStorageUrl() + "/component-types/$typeId/components/$id"
+        val url = getApiUrl() + "/component-types/$typeId/components/$id"
         val contentType = "application/json; charset=utf-8"
         val body = ""
 
@@ -460,7 +442,7 @@ class Webservice {
     fun testOrder(
         callback: CallbackWebserviceResult
     ) {
-        val url = getApiOrdersUrl() + "/orders"
+        val url = getApiUrl() + "/orders"
         val contentType = "application/json; charset=utf-8"
         val body = ""
 
@@ -505,7 +487,7 @@ class Webservice {
     fun testCustomer(
         callback: CallbackWebserviceResult
     ) {
-        val url = getApiCustomersUrl() + "/customers"
+        val url = getApiUrl() + "/customers"
         val contentType = "application/json; charset=utf-8"
         val body = ""
 
@@ -550,7 +532,7 @@ class Webservice {
     fun testStatusTypes(
         callback: CallbackWebserviceResult
     ) {
-        val url = getApiStatusUrl() + "/status-types"
+        val url = getApiUrl() + "/status-types"
         val contentType = "application/json; charset=utf-8"
         val body = ""
 
